@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 inkview = "0.1.1"
+rslib = { path = "third_party/anki/rslib" }
 
 [features]
 default = []

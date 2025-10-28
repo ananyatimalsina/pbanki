@@ -2,10 +2,13 @@
   pkgs ? import <nixpkgs> { },
 }:
 let
-  overrides = (builtins.fromTOML (builtins.readFile ./rust-toolchain.toml));
+  overrides = (builtins.fromTOML (builtins.readFile ./third_party/anki/rust-toolchain.toml));
   libPath =
     with pkgs;
     lib.makeLibraryPath [
+      protobuf
+      openssl
+      openssl.dev
       # load external libraries that you need in your rust project here
     ];
 in
@@ -19,7 +22,6 @@ pkgs.mkShell rec {
 
   packages = with pkgs; [
     zig
-    just
     steam-run
   ];
 
@@ -28,10 +30,15 @@ pkgs.mkShell rec {
   LIBCLANG_PATH = pkgs.lib.makeLibraryPath [ pkgs.llvmPackages_latest.libclang.lib ];
 
   shellHook = ''
-    export PATH=$PATH:''${CARGO_HOME:-~/.cargo}/bin
-    export PATH=$PATH:''${RUSTUP_HOME:-~/.rustup}/toolchains/$RUSTC_VERSION-x86_64-unknown-linux-gnu/bin/
-    rustup target add armv7-unknown-linux-gnueabi
-    cargo install cargo-zigbuild
+        export PATH=$PATH:''${CARGO_HOME:-~/.cargo}/bin
+        export PATH=$PATH:''${RUSTUP_HOME:-~/.rustup}/toolchains/$RUSTC_VERSION-x86_64-unknown-linux-gnu/bin/
+        	
+    	export OPENSSL_INCLUDE_DIR="${pkgs.openssl.dev}/include"
+        export OPENSSL_LIB_DIR="${pkgs.openssl.out}/lib"
+    	export OPENSSL_DIR="${pkgs.openssl.out}"
+
+        rustup target add armv7-unknown-linux-gnueabi
+        cargo install cargo-zigbuild
   '';
   # Add precompiled library to rustc search path
   RUSTFLAGS = (
