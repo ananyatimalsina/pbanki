@@ -56,3 +56,8 @@ Session.vim
 SDK-B300-6.8/
 .direnv/
 .envrc
+
+
+# Added by cargo
+
+/target
