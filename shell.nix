@@ -10,6 +10,9 @@ let
       openssl
       openssl.dev
       fontconfig
+      libxkbcommon
+      libGL
+      wayland
       # load external libraries that you need in your rust project here
     ];
 in
