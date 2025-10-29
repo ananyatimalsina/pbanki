@@ -1,0 +1,49 @@
+export component Deck {
+    in property <string> name;
+
+    in property <int> new;
+    in property <int> learn;
+    in property <int> due;
+
+    HorizontalLayout {
+        alignment: start;
+        padding: 20px;
+        TouchArea {
+            Image {
+                source: @image-url("./icons/angle_right.svg");
+            }
+
+            clicked => {
+            }
+        }
+
+        Text {
+            text: name;
+            font-size: 18pt;
+        }
+    }
+
+    HorizontalLayout {
+        alignment: end;
+        padding: 20px;
+        spacing: 5px;
+
+        Text {
+            text: new;
+            color: #808080;
+            font-size: 14pt;
+        }
+
+        Text {
+            text: learn;
+            color: #808080;
+            font-size: 14pt;
+        }
+
+        Text {
+            text: due;
+            color: #008000;
+            font-size: 14pt;
+        }
+    }
+}
