@@ -1,3 +1,7 @@
+import { HorizontalBox } from "std-widgets.slint";
+
+// TODO: Center the text contents vertucally (maybe using the Image height as refernce)
+
 export component Deck {
     in property <string> name;
 
@@ -9,7 +13,7 @@ export component Deck {
         alignment: start;
         padding: 20px;
         TouchArea {
-            Image {
+            img := Image {
                 source: @image-url("./icons/angle_right.svg");
             }
 
@@ -18,8 +22,9 @@ export component Deck {
         }
 
         Text {
+            y: img.height / 2 - self.height / 2;
             text: name;
-            font-size: 18pt;
+            font-size: 20px;
         }
     }
 
@@ -29,21 +34,24 @@ export component Deck {
         spacing: 5px;
 
         Text {
+            y: img.height / 2 - self.height / 2;
             text: new;
             color: #808080;
-            font-size: 14pt;
+            font-size: 15px;
         }
 
         Text {
+            y: img.height / 2 - self.height / 2;
             text: learn;
             color: #808080;
-            font-size: 14pt;
+            font-size: 15px;
         }
 
         Text {
+            y: img.height / 2 - self.height / 2;
             text: due;
             color: #008000;
-            font-size: 14pt;
+            font-size: 15px;
         }
     }
 }
