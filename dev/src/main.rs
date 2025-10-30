@@ -1,8 +1,39 @@
 use std::fs;
 
 use anki::{collection::CollectionBuilder, prelude::I18n};
+use anki_proto::decks::DeckTreeNode;
 
+use slint::Model;
 slint::include_modules!();
+
+fn flatten_tree(node: &DeckTreeNode) -> std::rc::Rc<slint::VecModel<DeckNode>> {
+    let result = std::rc::Rc::new(slint::VecModel::<DeckNode>::default());
+    flatten_tree_recursive(node, 0, -1, &result);
+    result
+}
+
+fn flatten_tree_recursive(
+    node: &DeckTreeNode,
+    level: i32,
+    parent_index: i32,
+    result: &std::rc::Rc<slint::VecModel<DeckNode>>,
+) {
+    for child in &node.children {
+        let current_index = result.row_count() as i32;
+
+        result.push(DeckNode {
+            name: child.name.clone().into(),
+            level,
+            collapsed: child.collapsed,
+            new: child.new_count as i32,
+            learn: child.learn_count as i32,
+            due: child.review_count as i32,
+            has_children: !child.children.is_empty(),
+            parent_index,
+        });
+        flatten_tree_recursive(child, level + 1, current_index, result);
+    }
+}
 
 fn main() {
     if let Err(e) = fs::create_dir_all("./pbanki/collection/collection.media") {
@@ -35,8 +66,10 @@ fn main() {
         }
     };
 
-    println!("{:?}", deck_tree);
-
     let ui = MainWindow::new().unwrap();
+
+    let deck_model = flatten_tree(&deck_tree);
+    ui.set_deck_tree(deck_model.into());
+
     let _ = ui.run();
 }

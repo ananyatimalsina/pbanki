@@ -1,6 +1,7 @@
-import { Button } from "std-widgets.slint";
+import { ListView } from "std-widgets.slint";
 import { Constants } from "constants.slint"; 
 import { Deck } from "deck.slint";
+import { DeckNode } from "types.slint";
 
 component Menu {
     in property <int> due;
@@ -38,17 +39,20 @@ export component MainWindow inherits Window {
     preferred-width: 500px;
     preferred-height: 400px;
 
+    in-out property <[DeckNode]> deck_tree;
+
     VerticalLayout {
-        alignment: start;
         padding: Constants.padding_standard;
         Menu { }
 
-        Deck {
-            name: "Spanish Vocabulary";
-        }
-
-        Deck {
-            name: "French Vocabulary";
+        ListView {
+            for deck[index] in deck_tree: Deck {
+                deck: deck;
+                shown: deck_tree[deck.parent_index].collapsed == false;
+                toggle => {
+                    deck_tree[index].collapsed = !deck_tree[index].collapsed;
+                }
+            }
         }
     }
 }

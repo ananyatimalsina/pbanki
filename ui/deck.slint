@@ -1,55 +1,61 @@
 import { Constants } from "constants.slint";
+import { DeckNode } from "types.slint";
 
 export component Deck {
-    in property <string> name;
-
-    in property <int> new;
-    in property <int> learn;
-    in property <int> due;
-
+    in-out property <DeckNode> deck;
+    in property <bool> shown;
+    callback toggle();
     HorizontalLayout {
-        alignment: start;
-        padding-top: Constants.padding_standard;
-        TouchArea {
-            Image {
-                source: @image-url("./icons/angle_right.svg");
+        if shown: HorizontalLayout {
+            padding-left: deck.level * Constants.padding_standard;
+            HorizontalLayout {
+                alignment: start;
+                padding-top: Constants.padding_standard;
+                TouchArea {
+                    visible: deck.has_children;
+                    Image {
+                        source: deck.collapsed ? @image-url("./icons/angle_right.svg") : @image-url("./icons/angle_down.svg");
+                    }
+
+                    clicked => {
+                        deck.collapsed = !deck.collapsed;
+                        toggle();
+                    }
+                }
+
+                Text {
+                    text: deck.name;
+                    font-size: Constants.font_size_content;
+                    vertical-alignment: center;
+                }
             }
 
-            clicked => {
+            HorizontalLayout {
+                alignment: end;
+                padding-top: Constants.padding_standard;
+                spacing: 5px;
+
+                Text {
+                    text: deck.new;
+                    color: #808080;
+                    font-size: Constants.font_size_subcontent;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    text: deck.learn;
+                    color: #808080;
+                    font-size: Constants.font_size_subcontent;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    text: deck.due;
+                    color: #008000;
+                    font-size: Constants.font_size_subcontent;
+                    vertical-alignment: center;
+                }
             }
-        }
-
-        Text {
-            text: name;
-            font-size: Constants.font_size_content;
-            vertical-alignment: center;
-        }
-    }
-
-    HorizontalLayout {
-        alignment: end;
-        padding-top: Constants.padding_standard;
-        spacing: 5px;
-
-        Text {
-            text: new;
-            color: #808080;
-            font-size: Constants.font_size_subcontent;
-            vertical-alignment: center;
-        }
-
-        Text {
-            text: learn;
-            color: #808080;
-            font-size: Constants.font_size_subcontent;
-            vertical-alignment: center;
-        }
-
-        Text {
-            text: due;
-            color: #008000;
-            font-size: Constants.font_size_subcontent;
-            vertical-alignment: center;
         }
     }
 }
