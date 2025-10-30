@@ -9,8 +9,8 @@ rgb = "0.8.37"
 slint = { version = "1.4.0", default-features = false, features = ["compat-1-2", "std", "software-renderer-systemfonts", "renderer-software"] }
 inkview = "0.1.1"
 inkview-slint = "0.1.1"
-#anki = { path = "third_party/anki/rslib" }
-#tokio = { version = "1", features = ["io-util"] }
+anki = { path = "third_party/anki/rslib" }
+tokio = { version = "1", features = ["io-util"] }
 
 [build-dependencies]
 slint-build = { version = "1.4.0" }

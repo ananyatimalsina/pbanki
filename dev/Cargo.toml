@@ -1,0 +1,13 @@
+[package]
+name = "dev"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+slint = "1.14.1"
+anki = { path = "../third_party/anki/rslib" }
+anki_proto = { path = "../third_party/anki/rslib/proto" }
+tokio = { version = "1", features = ["io-util"] }
+
+[build-dependencies]
+slint-build = "1.14.1"
