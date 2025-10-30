@@ -1,5 +1,6 @@
 use std::fs;
 
+use anki::timestamp::TimestampSecs;
 use anki::{collection::CollectionBuilder, prelude::I18n};
 use anki_proto::decks::DeckTreeNode;
 
@@ -58,7 +59,7 @@ fn main() {
     };
 
     // Now you can use DecksService methods directly on Collection
-    let deck_tree = match col.deck_tree(None) {
+    let deck_tree = match col.deck_tree(Some(TimestampSecs::now())) {
         Ok(tree) => tree,
         Err(e) => {
             eprintln!("Failed to get deck tree: {:?}", e);
@@ -66,7 +67,11 @@ fn main() {
         }
     };
 
+    println!("Deck tree: {:?}", deck_tree);
+
     let ui = MainWindow::new().unwrap();
+
+    ui.set_due_total(deck_tree.review_count as i32);
 
     let deck_model = flatten_tree(&deck_tree);
     ui.set_deck_tree(deck_model.into());

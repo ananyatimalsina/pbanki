@@ -38,13 +38,15 @@ component Menu {
 export component MainWindow inherits Window {
     preferred-width: 500px;
     preferred-height: 400px;
-
+    in-out property <int> due_total;
     in-out property <[DeckNode]> deck_tree;
     in property <string> dummy: "ÄÖÜäöüß„“”‘’—–@&$%+=¡¿¢£$¥€²³¼½¬¤¦§©®™°";
 
     VerticalLayout {
         padding: Constants.padding_standard;
-        Menu { }
+        Menu {
+            due: due_total;
+        }
 
         ListView {
             for deck[index] in deck_tree: Deck {
