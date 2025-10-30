@@ -11,8 +11,8 @@ export component Deck {
             HorizontalLayout {
                 alignment: start;
                 padding-top: Constants.padding_standard;
-                TouchArea {
-                    visible: deck.has_children;
+                if deck.has_children: TouchArea {
+
                     Image {
                         source: deck.collapsed ? @image-url("./icons/angle_right.svg") : @image-url("./icons/angle_down.svg");
                     }
