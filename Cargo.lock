@@ -5277,6 +5277,7 @@ name = "pbanki"
 version = "0.1.0"
 dependencies = [
  "anki",
+ "anki_proto",
  "euclid",
  "inkview",
  "inkview-slint",

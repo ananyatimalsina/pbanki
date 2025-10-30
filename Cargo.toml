@@ -10,6 +10,7 @@ slint = { version = "1.4.0", default-features = false, features = ["compat-1-2",
 inkview = "0.1.1"
 inkview-slint = "0.1.1"
 anki = { path = "third_party/anki/rslib" }
+anki_proto = { path = "third_party/anki/rslib/proto" }
 tokio = { version = "1", features = ["io-util"] }
 
 [build-dependencies]
