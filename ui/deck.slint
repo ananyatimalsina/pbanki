@@ -1,3 +1,5 @@
+import { Constants } from "constants.slint";
+
 export component Deck {
     in property <string> name;
 
@@ -7,7 +9,7 @@ export component Deck {
 
     HorizontalLayout {
         alignment: start;
-        padding: 20px;
+        padding-top: Constants.padding_standard;
         TouchArea {
             Image {
                 source: @image-url("./icons/angle_right.svg");
@@ -19,34 +21,34 @@ export component Deck {
 
         Text {
             text: name;
-            font-size: 20px;
+            font-size: Constants.font_size_content;
             vertical-alignment: center;
         }
     }
 
     HorizontalLayout {
         alignment: end;
-        padding: 20px;
+        padding-top: Constants.padding_standard;
         spacing: 5px;
 
         Text {
             text: new;
             color: #808080;
-            font-size: 15px;
+            font-size: Constants.font_size_subcontent;
             vertical-alignment: center;
         }
 
         Text {
             text: learn;
             color: #808080;
-            font-size: 15px;
+            font-size: Constants.font_size_subcontent;
             vertical-alignment: center;
         }
 
         Text {
             text: due;
             color: #008000;
-            font-size: 15px;
+            font-size: Constants.font_size_subcontent;
             vertical-alignment: center;
         }
     }

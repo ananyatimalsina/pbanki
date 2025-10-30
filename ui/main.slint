@@ -1,4 +1,5 @@
 import { Button } from "std-widgets.slint";
+import { Constants } from "constants.slint"; 
 import { Deck } from "deck.slint";
 
 component Menu {
@@ -7,11 +8,10 @@ component Menu {
     HorizontalLayout {
         VerticalLayout {
             alignment: start;
-            padding: 20px;
             spacing: 5px;
             Text {
                 text: "pbAnki";
-                font-size: 30px;
+                font-size: Constants.font_size_heading;
                 font-weight: 800;
             }
 
@@ -22,7 +22,6 @@ component Menu {
 
         HorizontalLayout {
             alignment: end;
-            padding: 20px;
             TouchArea {
                 Image {
                     source: @image-url("./icons/reload.svg");
@@ -41,6 +40,7 @@ export component MainWindow inherits Window {
 
     VerticalLayout {
         alignment: start;
+        padding: Constants.padding_standard;
         Menu { }
 
         Deck {
