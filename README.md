@@ -18,7 +18,7 @@ cd dev
 cargo run
 ```
 
-Place your Anki collection at `./pbanki/collection/collection.anki2`
+Place your Anki collection at `./pbanki/collection/`
 
 ### PocketBook
 
@@ -31,7 +31,7 @@ Requires: `cargo-zigbuild` and `zig`
 
 ## Installation
 
-1. Copy binary to device: `/mnt/ext1/applications/pbanki`
+1. Copy binary to device: `/mnt/ext1/applications/pbanki.app`
 2. Copy your Anki collection to: `/mnt/ext1/applications/pbanki/collection/`
 3. Launch from Applications menu
 
@@ -48,6 +48,18 @@ ui/       # Slint UI components (shared)
 - View deck hierarchies
 - Collapse/expand decks
 - Show card counts (new/learning/due)
+- Study cards with scheduling
+- Answer cards with Again/Hard/Good/Easy ratings
+- Display interval durations on rating buttons
+- Real-time deck count updates after answering
+- Support for type-in cards (`[[type:Back]]`)
+
+## TODOs
+
+- [ ] **AnkiWeb Sync** - Implement synchronization with AnkiWeb
+- [ ] **MathJax Rendering** - Add support for LaTeX/MathJax formulas in cards
+- [ ] **Image Support** - Display images embedded in cards from media folder
+- [ ] **UI Polishing** - Improve e-ink optimized interface and user experience
 
 ## License
 
