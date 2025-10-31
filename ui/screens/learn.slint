@@ -83,7 +83,7 @@ export component LearnScreen {
             }
         }
 
-        VerticalLayout {
+        if card.question != "No cards due!" && card.answer != "": VerticalLayout {
             alignment: end;
             HorizontalLayout {
                 alignment: center;
