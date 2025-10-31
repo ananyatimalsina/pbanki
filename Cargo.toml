@@ -19,3 +19,10 @@ slint-build = { version = "1.4.0" }
 [features]
 default = []
 sdk-6-8 = ["inkview/sdk-6-8"]
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
