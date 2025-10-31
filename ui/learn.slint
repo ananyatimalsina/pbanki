@@ -1,0 +1,84 @@
+import { Constants } from "constants.slint";
+import { Button } from "std-widgets.slint";
+
+export component LearnWindow inherits Window {
+    preferred-width: 500px;
+    preferred-height: 400px;
+
+    VerticalLayout {
+        alignment: start;
+        padding: Constants.padding_standard;
+        HorizontalLayout {
+            HorizontalLayout {
+                alignment: start;
+                TouchArea {
+                    Image {
+                        source: @image-url("./icons/home.svg");
+                    }
+
+                    clicked => {
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                alignment: center;
+                spacing: 5px;
+
+                Text {
+                    text: "0";
+                    color: #0000FF;
+                    font-size: Constants.font_size_subcontent;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    text: "0";
+                    color: #FF0000;
+                    font-size: Constants.font_size_subcontent;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    text: "0";
+                    color: #008000;
+                    font-size: Constants.font_size_subcontent;
+                    vertical-alignment: center;
+                }
+            }
+
+            HorizontalLayout {
+                alignment: end;
+                spacing: 5px;
+                TouchArea {
+                    Image {
+                        source: @image-url("./icons/undo.svg");
+                    }
+
+                    clicked => {
+                    }
+                }
+
+                TouchArea {
+                    Image {
+                        source: @image-url("./icons/redo.svg");
+                    }
+
+                    clicked => {
+                    }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            alignment: center;
+            padding-top: Constants.padding_standard;
+            Button {
+                text: "Show Answer";
+
+                clicked => {
+                }
+            }
+        }
+    }
+}
