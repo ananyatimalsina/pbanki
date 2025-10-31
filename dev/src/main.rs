@@ -9,13 +9,12 @@ slint::include_modules!();
 
 fn flatten_tree(node: &DeckTreeNode) -> std::rc::Rc<slint::VecModel<DeckNode>> {
     let result = std::rc::Rc::new(slint::VecModel::<DeckNode>::default());
-    flatten_tree_recursive(node, 0, -1, &result);
+    flatten_tree_recursive(node, -1, &result);
     result
 }
 
 fn flatten_tree_recursive(
     node: &DeckTreeNode,
-    level: i32,
     parent_index: i32,
     result: &std::rc::Rc<slint::VecModel<DeckNode>>,
 ) {
@@ -23,8 +22,9 @@ fn flatten_tree_recursive(
         let current_index = result.row_count() as i32;
 
         result.push(DeckNode {
+            id: child.deck_id as i32,
             name: child.name.clone().into(),
-            level,
+            level: child.level as i32,
             collapsed: child.collapsed,
             new: child.new_count as i32,
             learn: child.learn_count as i32,
@@ -32,7 +32,7 @@ fn flatten_tree_recursive(
             has_children: !child.children.is_empty(),
             parent_index,
         });
-        flatten_tree_recursive(child, level + 1, current_index, result);
+        flatten_tree_recursive(child, current_index, result);
     }
 }
 
