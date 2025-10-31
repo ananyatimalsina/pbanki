@@ -9,7 +9,7 @@ component Menu {
     HorizontalLayout {
         VerticalLayout {
             alignment: start;
-            spacing: 5px;
+            spacing: Constants.spacing_standard;
             Text {
                 text: "pbAnki";
                 font-size: Constants.font_size_heading;
@@ -37,7 +37,7 @@ component Menu {
 
 export component DeckSelectScreen {
     in property <int> due_total;
-    in-out property <[DeckNode]> deck_tree;
+    in-out property <[DeckNode]> deck_nodes;
 
     callback deck_clicked(deck: DeckNode);
 
@@ -47,11 +47,11 @@ export component DeckSelectScreen {
         }
 
         ListView {
-            for deck[index] in deck_tree: Deck {
+            for deck[index] in deck_nodes: Deck {
                 deck: deck;
-                shown: deck_tree[deck.parent_index].collapsed == false;
+                shown: deck_nodes[deck.parent_index].collapsed == false;
                 toggle => {
-                    deck_tree[index].collapsed = !deck_tree[index].collapsed;
+                    deck_nodes[index].collapsed = !deck_nodes[index].collapsed;
                 }
                 deck_clicked => {
                     deck_clicked(deck);

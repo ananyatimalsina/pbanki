@@ -10,7 +10,15 @@ export struct DeckNode {
 	parent_index: int,
 }
 
+export struct DeckTree {
+	due_total: int,
+	deck_nodes: [DeckNode],
+}
+
 export struct CardNode {
+	id: duration,
+	deck: DeckNode,
 	question: string,
 	answer: string,
+	durations: [string],
 }
