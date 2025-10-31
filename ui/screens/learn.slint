@@ -1,22 +1,24 @@
-import { Constants } from "constants.slint";
+import { Constants } from "../constants.slint";
+import { DeckNode } from "../types.slint";
 import { Button } from "std-widgets.slint";
 
-export component LearnWindow inherits Window {
-    preferred-width: 500px;
-    preferred-height: 400px;
+export component LearnScreen {
+    in property <DeckNode> deck;
+
+    callback home_clicked();
 
     VerticalLayout {
         alignment: start;
-        padding: Constants.padding_standard;
         HorizontalLayout {
             HorizontalLayout {
                 alignment: start;
                 TouchArea {
                     Image {
-                        source: @image-url("./icons/home.svg");
+                        source: @image-url("../icons/home.svg");
                     }
 
                     clicked => {
+                        home_clicked();
                     }
                 }
             }
@@ -26,21 +28,21 @@ export component LearnWindow inherits Window {
                 spacing: 5px;
 
                 Text {
-                    text: "0";
+                    text: deck.new;
                     color: #0000FF;
                     font-size: Constants.font_size_subcontent;
                     vertical-alignment: center;
                 }
 
                 Text {
-                    text: "0";
+                    text: deck.learn;
                     color: #FF0000;
                     font-size: Constants.font_size_subcontent;
                     vertical-alignment: center;
                 }
 
                 Text {
-                    text: "0";
+                    text: deck.due;
                     color: #008000;
                     font-size: Constants.font_size_subcontent;
                     vertical-alignment: center;
@@ -52,7 +54,7 @@ export component LearnWindow inherits Window {
                 spacing: 5px;
                 TouchArea {
                     Image {
-                        source: @image-url("./icons/undo.svg");
+                        source: @image-url("../icons/undo.svg");
                     }
 
                     clicked => {
@@ -61,7 +63,7 @@ export component LearnWindow inherits Window {
 
                 TouchArea {
                     Image {
-                        source: @image-url("./icons/redo.svg");
+                        source: @image-url("../icons/redo.svg");
                     }
 
                     clicked => {

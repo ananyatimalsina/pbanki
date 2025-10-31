@@ -1,60 +1,32 @@
-import { ListView } from "std-widgets.slint";
-import { Constants } from "constants.slint"; 
-import { Deck } from "deck.slint";
+import { Constants } from "constants.slint";
 import { DeckNode } from "types.slint";
-
-component Menu {
-    in property <int> due;
-
-    HorizontalLayout {
-        VerticalLayout {
-            alignment: start;
-            spacing: 5px;
-            Text {
-                text: "pbAnki";
-                font-size: Constants.font_size_heading;
-                font-weight: 800;
-            }
-
-            Text {
-                text: due + " cards due";
-            }
-        }
-
-        HorizontalLayout {
-            alignment: end;
-            TouchArea {
-                Image {
-                    source: @image-url("./icons/reload.svg");
-                }
-
-                clicked => {
-                }
-            }
-        }
-    }
-}
+import { LearnScreen } from "screens/learn.slint";
+import { DeckSelectScreen } from "screens/deck_select.slint";
 
 export component MainWindow inherits Window {
     preferred-width: 500px;
     preferred-height: 400px;
+    in-out property <bool> learning;
+    in-out property <DeckNode> current_deck;
+
     in-out property <int> due_total;
     in-out property <[DeckNode]> deck_tree;
     in property <string> dummy: "ÄÖÜäöüß„“”‘’—–@&$%+=¡¿¢£$¥€²³¼½¬¤¦§©®™°";
 
     VerticalLayout {
         padding: Constants.padding_standard;
-        Menu {
-            due: due_total;
+        if !learning: DeckSelectScreen {
+            due_total: due_total;
+            deck_tree: deck_tree;
+            deck_clicked(deck) => {
+                current_deck = deck;
+                learning = true;
+            }
         }
-
-        ListView {
-            for deck[index] in deck_tree: Deck {
-                deck: deck;
-                shown: deck_tree[deck.parent_index].collapsed == false;
-                toggle => {
-                    deck_tree[index].collapsed = !deck_tree[index].collapsed;
-                }
+        if learning: LearnScreen {
+            deck: current_deck;
+            home_clicked => {
+                learning = false;
             }
         }
     }

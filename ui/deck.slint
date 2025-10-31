@@ -4,7 +4,10 @@ import { DeckNode } from "types.slint";
 export component Deck {
     in-out property <DeckNode> deck;
     in property <bool> shown;
+
     callback toggle();
+    callback deck_clicked();
+
     HorizontalLayout {
         if shown: HorizontalLayout {
             padding-left: deck.level * Constants.padding_standard;
@@ -22,11 +25,16 @@ export component Deck {
                         toggle();
                     }
                 }
+                TouchArea {
+                    Text {
+                        text: deck.name;
+                        font-size: Constants.font_size_content;
+                        vertical-alignment: center;
+                    }
 
-                Text {
-                    text: deck.name;
-                    font-size: Constants.font_size_content;
-                    vertical-alignment: center;
+                    clicked => {
+                        deck_clicked();
+                    }
                 }
             }
 

@@ -1,0 +1,62 @@
+import { ListView } from "std-widgets.slint";
+import { Deck } from "../deck.slint";
+import { Constants } from "../constants.slint";
+import { DeckNode } from "../types.slint";
+
+component Menu {
+    in property <int> due;
+
+    HorizontalLayout {
+        VerticalLayout {
+            alignment: start;
+            spacing: 5px;
+            Text {
+                text: "pbAnki";
+                font-size: Constants.font_size_heading;
+                font-weight: 800;
+            }
+
+            Text {
+                text: due + " cards due";
+            }
+        }
+
+        HorizontalLayout {
+            alignment: end;
+            TouchArea {
+                Image {
+                    source: @image-url("../icons/reload.svg");
+                }
+
+                clicked => {
+                }
+            }
+        }
+    }
+}
+
+export component DeckSelectScreen {
+    in property <int> due_total;
+    in-out property <[DeckNode]> deck_tree;
+
+    callback deck_clicked(deck: DeckNode);
+
+    VerticalLayout {
+        Menu {
+            due: due_total;
+        }
+
+        ListView {
+            for deck[index] in deck_tree: Deck {
+                deck: deck;
+                shown: deck_tree[deck.parent_index].collapsed == false;
+                toggle => {
+                    deck_tree[index].collapsed = !deck_tree[index].collapsed;
+                }
+                deck_clicked => {
+                    deck_clicked(deck);
+                }
+            }
+        }
+    }
+}
