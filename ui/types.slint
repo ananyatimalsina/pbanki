@@ -1,5 +1,5 @@
 export struct DeckNode {
-	id: int,
+	id: duration,
 	name: string,
 	level: int,
 	collapsed: bool,
@@ -8,4 +8,9 @@ export struct DeckNode {
 	due: int,
 	has_children: bool,
 	parent_index: int,
+}
+
+export struct CardNode {
+	question: string,
+	answer: string,
 }

@@ -1,0 +1,17 @@
+import { CardNode } from "../types.slint";
+import { Constants } from "../constants.slint";
+
+export component Card {
+    in property <CardNode> card;
+    in property <bool> show_answer;
+
+    Text {
+        text: show_answer ? card.answer : card.question;
+        font-size: Constants.font_size_content;
+        wrap: TextWrap.word-wrap;
+        overflow: TextOverflow.elide;
+        width: root.width - Constants.padding_standard;
+        vertical-alignment: center;
+        horizontal-alignment: center;
+    }
+}

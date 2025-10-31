@@ -1,5 +1,5 @@
-import { Constants } from "constants.slint";
-import { DeckNode } from "types.slint";
+import { Constants } from "../constants.slint";
+import { DeckNode } from "../types.slint";
 
 export component Deck {
     in-out property <DeckNode> deck;
@@ -17,7 +17,7 @@ export component Deck {
                 if deck.has_children: TouchArea {
 
                     Image {
-                        source: deck.collapsed ? @image-url("./icons/angle_right.svg") : @image-url("./icons/angle_down.svg");
+                        source: deck.collapsed ? @image-url("../icons/angle_right.svg") : @image-url("../icons/angle_down.svg");
                     }
 
                     clicked => {

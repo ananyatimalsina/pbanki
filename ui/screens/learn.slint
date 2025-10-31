@@ -1,84 +1,129 @@
 import { Constants } from "../constants.slint";
-import { DeckNode } from "../types.slint";
+import { DeckNode, CardNode } from "../types.slint";
+import { Card } from "../components/card.slint";
 import { Button } from "std-widgets.slint";
 
 export component LearnScreen {
     in property <DeckNode> deck;
+    in property <CardNode> card;
+    out property <bool> show_answer;
 
     callback home_clicked();
 
     VerticalLayout {
-        alignment: start;
-        HorizontalLayout {
+        VerticalLayout {
+            alignment: start;
             HorizontalLayout {
-                alignment: start;
-                TouchArea {
-                    Image {
-                        source: @image-url("../icons/home.svg");
+                padding-bottom: Constants.padding_standard;
+                HorizontalLayout {
+                    alignment: start;
+                    TouchArea {
+                        Image {
+                            source: @image-url("../icons/home.svg");
+                        }
+
+                        clicked => {
+                            home_clicked();
+                        }
+                    }
+                }
+
+                HorizontalLayout {
+                    alignment: center;
+                    spacing: 5px;
+
+                    Text {
+                        text: deck.new;
+                        color: #0000FF;
+                        font-size: Constants.font_size_subcontent;
+                        vertical-alignment: center;
                     }
 
-                    clicked => {
-                        home_clicked();
+                    Text {
+                        text: deck.learn;
+                        color: #FF0000;
+                        font-size: Constants.font_size_subcontent;
+                        vertical-alignment: center;
+                    }
+
+                    Text {
+                        text: deck.due;
+                        color: #008000;
+                        font-size: Constants.font_size_subcontent;
+                        vertical-alignment: center;
+                    }
+                }
+
+                HorizontalLayout {
+                    alignment: end;
+                    spacing: 5px;
+                    TouchArea {
+                        Image {
+                            source: @image-url("../icons/undo.svg");
+                        }
+
+                        clicked => {
+                        }
+                    }
+
+                    TouchArea {
+                        Image {
+                            source: @image-url("../icons/redo.svg");
+                        }
+
+                        clicked => {
+                        }
                     }
                 }
             }
 
-            HorizontalLayout {
-                alignment: center;
-                spacing: 5px;
-
-                Text {
-                    text: deck.new;
-                    color: #0000FF;
-                    font-size: Constants.font_size_subcontent;
-                    vertical-alignment: center;
-                }
-
-                Text {
-                    text: deck.learn;
-                    color: #FF0000;
-                    font-size: Constants.font_size_subcontent;
-                    vertical-alignment: center;
-                }
-
-                Text {
-                    text: deck.due;
-                    color: #008000;
-                    font-size: Constants.font_size_subcontent;
-                    vertical-alignment: center;
-                }
-            }
-
-            HorizontalLayout {
-                alignment: end;
-                spacing: 5px;
-                TouchArea {
-                    Image {
-                        source: @image-url("../icons/undo.svg");
-                    }
-
-                    clicked => {
-                    }
-                }
-
-                TouchArea {
-                    Image {
-                        source: @image-url("../icons/redo.svg");
-                    }
-
-                    clicked => {
-                    }
-                }
+            Card {
+                card: card;
+                show_answer: show_answer;
             }
         }
 
-        HorizontalLayout {
-            alignment: center;
-            padding-top: Constants.padding_standard;
-            Button {
-                text: "Show Answer";
+        VerticalLayout {
+            alignment: end;
+            HorizontalLayout {
+                alignment: center;
+                padding-top: Constants.padding_standard;
+                if !show_answer: Button {
+                    text: "Show Answer";
 
-                clicked => {
+                    clicked => {
+                        show_answer = true;
+                    }
+                }
+                if show_answer: HorizontalLayout {
+                    spacing: 5px;
+                    Button {
+                        text: "<dur\nAgain";
+
+                        clicked => {
+                        }
+                    }
+
+                    Button {
+                        text: "<dur\nHard";
+
+                        clicked => {
+                        }
+                    }
+
+                    Button {
+                        text: "<dur\nGood";
+
+                        clicked => {
+                        }
+                    }
+
+                    Button {
+                        text: "<dur\nEasy";
+
+                        clicked => {
+                        }
+                    }
                 }
             }
         }

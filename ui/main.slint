@@ -1,5 +1,5 @@
 import { Constants } from "constants.slint";
-import { DeckNode } from "types.slint";
+import { DeckNode, CardNode } from "types.slint";
 import { LearnScreen } from "screens/learn.slint";
 import { DeckSelectScreen } from "screens/deck_select.slint";
 
@@ -8,10 +8,13 @@ export component MainWindow inherits Window {
     preferred-height: 400px;
     in-out property <bool> learning;
     in-out property <DeckNode> current_deck;
+    in-out property <CardNode> current_card;
 
     in-out property <int> due_total;
     in-out property <[DeckNode]> deck_tree;
     in property <string> dummy: "ÄÖÜäöüß„“”‘’—–@&$%+=¡¿¢£$¥€²³¼½¬¤¦§©®™°";
+
+    callback deck_clicked(deck_id: duration);
 
     VerticalLayout {
         padding: Constants.padding_standard;
@@ -20,11 +23,13 @@ export component MainWindow inherits Window {
             deck_tree: deck_tree;
             deck_clicked(deck) => {
                 current_deck = deck;
+                deck_clicked(deck.id);
                 learning = true;
             }
         }
         if learning: LearnScreen {
             deck: current_deck;
+            card: current_card;
             home_clicked => {
                 learning = false;
             }
