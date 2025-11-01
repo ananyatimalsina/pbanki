@@ -1296,8 +1296,6 @@ version = "0.1.0"
 dependencies = [
  "anki",
  "anki_proto",
- "euclid",
- "rgb",
  "slint",
  "slint-build",
  "tokio",
@@ -3801,8 +3799,7 @@ checksum = "a257582fdcde896fd96463bf2d40eefea0580021c0712a0e2b028b60b47a837a"
 [[package]]
 name = "inkview"
 version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1495ed4ed6710fc5e58ece912b70c3d44a45c024c3d5fc735c25f9499145a407"
+source = "git+https://github.com/ananyatimalsina/inkview-rs?branch=master#70d83cae18bd5a83eaa9fd3861bbede9d816fe4e"
 dependencies = [
  "libloading",
  "num-derive",
@@ -3813,8 +3810,7 @@ dependencies = [
 [[package]]
 name = "inkview-slint"
 version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11e662d0e10b9ff4cf89d8784abb65ee275a2d56b42c40c0577b91765caa67fd"
+source = "git+https://github.com/ananyatimalsina/inkview-rs?branch=master#70d83cae18bd5a83eaa9fd3861bbede9d816fe4e"
 dependencies = [
  "euclid",
  "inkview",
@@ -5291,8 +5287,10 @@ version = "0.1.0"
 dependencies = [
  "anki",
  "common",
+ "euclid",
  "inkview",
  "inkview-slint",
+ "rgb",
  "slint",
  "tokio",
 ]

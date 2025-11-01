@@ -6,5 +6,5 @@ edition = "2024"
 [dependencies]
 common = { path = "../common" }
 anki = { path = "../third_party/anki/rslib" }
-slint = "1.14.1"
+slint = { version = "1.14.1", default-features = false, features = ["compat-1-2", "std", "backend-winit", "software-renderer-systemfonts", "renderer-software"] }
 tokio = { version = "1", features = ["io-util"] }

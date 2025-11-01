@@ -4,11 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-common = { path = "./common", features = ["software-renderer"] }
+euclid = "0.22.11"
+rgb = "0.8.52"
+common = { path = "./common" }
 anki = { path = "third_party/anki/rslib" }
 slint = {version = "1.14.1", default-features = false, features = ["compat-1-2", "std", "software-renderer-systemfonts", "renderer-software"]}
-inkview = "0.1.1"
-inkview-slint = "0.1.1"
+inkview = { git = "https://github.com/ananyatimalsina/inkview-rs", branch = "master" }
+inkview-slint = { git = "https://github.com/ananyatimalsina/inkview-rs", branch = "master" }
 tokio = { version = "1", features = ["io-util"] }
 
 [features]

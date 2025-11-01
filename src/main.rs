@@ -96,8 +96,6 @@ fn main() {
 
     inkview::iv_main(iv, {
         move |evt| {
-            // println!("got evt: {:?}", evt);
-
             if evt_tx.send(evt).is_err() {
                 unsafe {
                     iv.CloseApp();
