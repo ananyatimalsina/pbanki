@@ -2,6 +2,79 @@ import { Constants } from "../constants.slint";
 import { DeckNode, CardNode } from "../types.slint";
 import { Card } from "../components/card.slint";
 import { Button } from "std-widgets.slint";
+import { RatingButton } from "../components/rating_button.slint";
+
+component Menu {
+    in property <CardNode> card;
+    callback home_clicked();
+
+    HorizontalLayout {
+        padding-bottom: Constants.padding_standard;
+        HorizontalLayout {
+            width: 33.33%;
+            alignment: start;
+            TouchArea {
+                Image {
+                    source: @image-url("../icons/home.svg");
+                }
+
+                clicked => {
+                    home_clicked();
+                }
+            }
+        }
+
+        HorizontalLayout {
+            width: 33.33%;
+            alignment: center;
+            spacing: Constants.spacing_standard;
+
+            Text {
+                text: card.deck.new;
+                color: #0000FF;
+                font-size: Constants.font_size_subcontent;
+                vertical-alignment: center;
+            }
+
+            Text {
+                text: card.deck.learn;
+                color: #FF0000;
+                font-size: Constants.font_size_subcontent;
+                vertical-alignment: center;
+            }
+
+            Text {
+                text: card.deck.due;
+                color: #008000;
+                font-size: Constants.font_size_subcontent;
+                vertical-alignment: center;
+            }
+        }
+
+        HorizontalLayout {
+            width: 33.33%;
+            alignment: end;
+            spacing: Constants.spacing_standard;
+            TouchArea {
+                Image {
+                    source: @image-url("../icons/undo.svg");
+                }
+
+                clicked => {
+                }
+            }
+
+            TouchArea {
+                Image {
+                    source: @image-url("../icons/redo.svg");
+                }
+
+                clicked => {
+                }
+            }
+        }
+    }
+}
 
 export component LearnScreen {
     in property <CardNode> card;
@@ -21,13 +94,13 @@ export component LearnScreen {
                     accept
                 } else {
                     if event.text == Key.LeftArrow || event.text == Key.DownArrow || event.text == Key.PageDown {
-                        rate(1);
+                        rate(0);
                         accept
                     } else if event.text == Key.RightArrow || event.text == Key.Return {
-                        rate(2);
+                        rate(1);
                         accept
                     } else if event.text == Key.Menu || event.text == Key.UpArrow || event.text == Key.PageUp {
-                        rate(3);
+                        rate(2);
                         accept
                     }
                 }
@@ -35,132 +108,48 @@ export component LearnScreen {
             reject
         }
         VerticalLayout {
-            VerticalLayout {
-                alignment: start;
-                HorizontalLayout {
-                    padding-bottom: Constants.padding_standard;
-                    HorizontalLayout {
-                        width: 33.33%;
-                        alignment: start;
-                        TouchArea {
-                            Image {
-                                source: @image-url("../icons/home.svg");
-                            }
-
-                            clicked => {
-                                home_clicked();
-                            }
-                        }
-                    }
-
-                    HorizontalLayout {
-                        width: 33.33%;
-                        alignment: center;
-                        spacing: Constants.spacing_standard;
-
-                        Text {
-                            text: card.deck.new;
-                            color: #0000FF;
-                            font-size: Constants.font_size_subcontent;
-                            vertical-alignment: center;
-                        }
-
-                        Text {
-                            text: card.deck.learn;
-                            color: #FF0000;
-                            font-size: Constants.font_size_subcontent;
-                            vertical-alignment: center;
-                        }
-
-                        Text {
-                            text: card.deck.due;
-                            color: #008000;
-                            font-size: Constants.font_size_subcontent;
-                            vertical-alignment: center;
-                        }
-                    }
-
-                    HorizontalLayout {
-                        width: 33.33%;
-                        alignment: end;
-                        spacing: Constants.spacing_standard;
-                        TouchArea {
-                            Image {
-                                source: @image-url("../icons/undo.svg");
-                            }
-
-                            clicked => {
-                            }
-                        }
-
-                        TouchArea {
-                            Image {
-                                source: @image-url("../icons/redo.svg");
-                            }
-
-                            clicked => {
-                            }
-                        }
-                    }
-                }
-
-                Card {
-                    card: card;
-                    show_answer: show_answer;
+            alignment: start;
+            Menu {
+                card: card;
+                home_clicked => {
+                    home_clicked();
                 }
             }
 
-            if valid_deck: VerticalLayout {
-                alignment: end;
+            Card {
+                card: card;
+                show_answer: show_answer;
+            }
+        }
+
+        if valid_deck: VerticalLayout {
+            alignment: end;
+            HorizontalLayout {
+                alignment: center;
+                padding-top: Constants.padding_standard;
+                Button {
+                    visible: !show_answer;
+                    width: show_answer ? 0 : self.preferred-width * 2;
+                    height: show_answer ? 0 : self.preferred-height * 2;
+                    text: "Show Answer";
+
+                    clicked => {
+                        show_answer = true;
+                    }
+                }
+
                 HorizontalLayout {
-                    alignment: center;
-                    padding-top: Constants.padding_standard;
-                    Button {
-                        visible: !show_answer;
-                        width: show_answer ? 0 : self.preferred-width;
-                        height: show_answer ? 0 : self.preferred-height;
-                        text: "Show Answer";
+                    visible: show_answer;
+                    width: show_answer ? self.preferred-width : 0;
+                    height: show_answer ? self.preferred-height : 0;
+                    spacing: Constants.spacing_medium;
+                    for rating in 4: RatingButton {
+                        duration: card.durations[rating];
+                        label: rating == 0 ? "Again" : rating == 1 ? "Hard" : rating == 2 ? "Good" : "Easy";
+                        color: rating == 0 ? #FF0000 : rating == 2 ? #008000 : rating == 3 ? #0000FF : #000000;
 
                         clicked => {
-                            show_answer = true;
-                        }
-                    }
-
-                    HorizontalLayout {
-                        visible: show_answer;
-                        width: show_answer ? self.preferred-width : 0;
-                        height: show_answer ? self.preferred-height : 0;
-                        spacing: Constants.spacing_standard;
-                        Button {
-                            text: card.durations[0] + "\nAgain";
-
-                            clicked => {
-                                rate(1);
-                            }
-                        }
-
-                        Button {
-                            text: card.durations[1] + "\nHard";
-
-                            clicked => {
-                                rate(2);
-                            }
-                        }
-
-                        Button {
-                            text: card.durations[2] + "\nGood";
-
-                            clicked => {
-                                rate(3);
-                            }
-                        }
-
-                        Button {
-                            text: card.durations[3] + "\nEasy";
-
-                            clicked => {
-                                rate(4);
-                            }
+                            rate(rating);
                         }
                     }
                 }

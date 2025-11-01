@@ -144,19 +144,19 @@ pub fn rate_card(session: &LearnSession, rating: i32, deck: DeckNode) -> CardNod
         .unwrap_or(0);
 
     let (new_state, rating_enum) = match rating {
-        1 => (
+        0 => (
             states.again.clone(),
             anki::scheduler::answering::Rating::Again,
         ),
-        2 => (
+        1 => (
             states.hard.clone(),
             anki::scheduler::answering::Rating::Hard,
         ),
-        3 => (
+        2 => (
             states.good.clone(),
             anki::scheduler::answering::Rating::Good,
         ),
-        4 => (
+        3 => (
             states.easy.clone(),
             anki::scheduler::answering::Rating::Easy,
         ),

@@ -1,0 +1,53 @@
+import { Palette } from "std-widgets.slint";
+
+export component RatingButton {
+    in property <string> duration;
+    in property <color> color;
+    in property <string> label;
+    in property <bool> enabled: true;
+    out property <bool> pressed: self.enabled && touch.pressed;
+    callback clicked <=> touch.clicked;
+    min-width: max(32px, layout.min-width);
+    min-height: max(32px, layout.min-height);
+    background := Rectangle {
+        border-radius: 4px;
+        background: root.pressed ? Palette.control-background.darker(0.1) : touch.has-hover ? Palette.control-background.darker(0.05) : Palette.control-background;
+        animate background { duration: 150ms; }
+        border := Rectangle {
+            border-radius: parent.border-radius;
+            border-width: 1px;
+            border-color: root.pressed ? Palette.border.darker(0.2) : Palette.border;
+            animate border-color { duration: 150ms; }
+        }
+
+        layout := VerticalLayout {
+            padding-left: 12px;
+            padding-right: 12px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            alignment: center;
+            Text {
+                text: root.duration;
+                font-family: "Monospace";
+                font-size: 14px;
+                font-weight: 400;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                color: color;
+            }
+
+            Text {
+                text: root.label;
+                font-size: 14px;
+                font-weight: 400;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                color: Palette.foreground;
+            }
+        }
+    }
+
+    touch := TouchArea {
+        enabled: root.enabled;
+    }
+}
