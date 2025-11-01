@@ -10,7 +10,7 @@ export component Deck {
 
     HorizontalLayout {
         if shown: HorizontalLayout {
-            padding-left: deck.level * Constants.padding_standard;
+            padding-left: (deck.level - 1) * Constants.padding_standard;
             HorizontalLayout {
                 alignment: start;
                 padding-top: Constants.padding_standard;
