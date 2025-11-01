@@ -1,15 +1,10 @@
-mod api;
-mod utils;
-
-use crate::api::{LearnSession, next_card, rate_card, update_deck_tree};
+use common::*;
 
 use std::cell::RefCell;
 use std::fs;
 use std::rc::Rc;
 
 use anki::{collection::CollectionBuilder, prelude::I18n};
-
-slint::include_modules!();
 
 fn main() {
     if let Err(e) = fs::create_dir_all("./pbanki/collection/collection.media") {

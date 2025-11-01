@@ -1,18 +1,11 @@
-mod api;
-mod utils;
-
-use crate::api::{LearnSession, next_card, rate_card, update_deck_tree};
-
+use common::*;
 use std::cell::RefCell;
 use std::fs;
 use std::rc::Rc;
 
 use anki::{collection::CollectionBuilder, prelude::I18n};
 
-slint::include_modules!();
-
 use inkview::Event;
-use slint::ComponentHandle;
 
 fn main() {
     let iv = Box::leak(Box::new(inkview::load())) as &_;

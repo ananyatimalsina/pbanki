@@ -1,0 +1,18 @@
+[package]
+name = "common"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+euclid = "0.22.11"
+rgb = "0.8.52"
+anki = { path = "../third_party/anki/rslib" }
+anki_proto = { path = "../third_party/anki/rslib/proto" }
+slint = {version = "1.14.1", default-features = false, features = ["compat-1-2", "std"]}
+tokio = { version = "1", features = ["io-util"] }
+
+[build-dependencies]
+slint-build = "1.14.1"
+
+[features]
+software-renderer = []
