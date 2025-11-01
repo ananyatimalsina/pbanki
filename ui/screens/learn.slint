@@ -5,134 +5,162 @@ import { Button } from "std-widgets.slint";
 
 export component LearnScreen {
     in property <CardNode> card;
-    out property <bool> show_answer;
+    in-out property <bool> show_answer;
+    property <bool> valid_deck: card.question != "No cards due!" && card.answer != "";
 
     callback home_clicked();
     callback rate(rating: int);
 
-    VerticalLayout {
-        VerticalLayout {
-            alignment: start;
-            HorizontalLayout {
-                padding-bottom: Constants.padding_standard;
-                HorizontalLayout {
-                    width: 33.33%;
-                    alignment: start;
-                    TouchArea {
-                        Image {
-                            source: @image-url("../icons/home.svg");
-                        }
+    forward-focus: focus-scope;
 
-                        clicked => {
-                            home_clicked();
-                        }
-                    }
-                }
-
-                HorizontalLayout {
-                    width: 33.33%;
-                    alignment: center;
-                    spacing: Constants.spacing_standard;
-
-                    Text {
-                        text: card.deck.new;
-                        color: #0000FF;
-                        font-size: Constants.font_size_subcontent;
-                        vertical-alignment: center;
-                    }
-
-                    Text {
-                        text: card.deck.learn;
-                        color: #FF0000;
-                        font-size: Constants.font_size_subcontent;
-                        vertical-alignment: center;
-                    }
-
-                    Text {
-                        text: card.deck.due;
-                        color: #008000;
-                        font-size: Constants.font_size_subcontent;
-                        vertical-alignment: center;
-                    }
-                }
-
-                HorizontalLayout {
-                    width: 33.33%;
-                    alignment: end;
-                    spacing: Constants.spacing_standard;
-                    TouchArea {
-                        Image {
-                            source: @image-url("../icons/undo.svg");
-                        }
-
-                        clicked => {
-                        }
-                    }
-
-                    TouchArea {
-                        Image {
-                            source: @image-url("../icons/redo.svg");
-                        }
-
-                        clicked => {
-                        }
+    focus-scope := FocusScope {
+        key-pressed(event) => {
+            if valid_deck {
+                if !show_answer {
+                    show_answer = true;
+                    accept
+                } else {
+                    if event.text == Key.LeftArrow || event.text == Key.DownArrow || event.text == Key.PageDown {
+                        rate(1);
+                        accept
+                    } else if event.text == Key.RightArrow || event.text == Key.Return {
+                        rate(2);
+                        accept
+                    } else if event.text == Key.Menu || event.text == Key.UpArrow || event.text == Key.PageUp {
+                        rate(3);
+                        accept
                     }
                 }
             }
-
-            Card {
-                card: card;
-                show_answer: show_answer;
-            }
+            reject
         }
+        VerticalLayout {
+            VerticalLayout {
+                alignment: start;
+                HorizontalLayout {
+                    padding-bottom: Constants.padding_standard;
+                    HorizontalLayout {
+                        width: 33.33%;
+                        alignment: start;
+                        TouchArea {
+                            Image {
+                                source: @image-url("../icons/home.svg");
+                            }
 
-        if card.question != "No cards due!" && card.answer != "": VerticalLayout {
-            alignment: end;
-            HorizontalLayout {
-                alignment: center;
-                padding-top: Constants.padding_standard;
-                if !show_answer: Button {
-                    text: "Show Answer";
+                            clicked => {
+                                home_clicked();
+                            }
+                        }
+                    }
 
-                    clicked => {
-                        show_answer = true;
+                    HorizontalLayout {
+                        width: 33.33%;
+                        alignment: center;
+                        spacing: Constants.spacing_standard;
+
+                        Text {
+                            text: card.deck.new;
+                            color: #0000FF;
+                            font-size: Constants.font_size_subcontent;
+                            vertical-alignment: center;
+                        }
+
+                        Text {
+                            text: card.deck.learn;
+                            color: #FF0000;
+                            font-size: Constants.font_size_subcontent;
+                            vertical-alignment: center;
+                        }
+
+                        Text {
+                            text: card.deck.due;
+                            color: #008000;
+                            font-size: Constants.font_size_subcontent;
+                            vertical-alignment: center;
+                        }
+                    }
+
+                    HorizontalLayout {
+                        width: 33.33%;
+                        alignment: end;
+                        spacing: Constants.spacing_standard;
+                        TouchArea {
+                            Image {
+                                source: @image-url("../icons/undo.svg");
+                            }
+
+                            clicked => {
+                            }
+                        }
+
+                        TouchArea {
+                            Image {
+                                source: @image-url("../icons/redo.svg");
+                            }
+
+                            clicked => {
+                            }
+                        }
                     }
                 }
-                if show_answer: HorizontalLayout {
-                    spacing: Constants.spacing_standard;
+
+                Card {
+                    card: card;
+                    show_answer: show_answer;
+                }
+            }
+
+            if valid_deck: VerticalLayout {
+                alignment: end;
+                HorizontalLayout {
+                    alignment: center;
+                    padding-top: Constants.padding_standard;
                     Button {
-                        text: card.durations[0] + "\nAgain";
+                        visible: !show_answer;
+                        width: show_answer ? 0 : self.preferred-width;
+                        height: show_answer ? 0 : self.preferred-height;
+                        text: "Show Answer";
 
                         clicked => {
-                            rate(1);
-                            show_answer = false;
+                            show_answer = true;
                         }
                     }
 
-                    Button {
-                        text: card.durations[1] + "\nHard";
+                    HorizontalLayout {
+                        visible: show_answer;
+                        width: show_answer ? self.preferred-width : 0;
+                        height: show_answer ? self.preferred-height : 0;
+                        spacing: Constants.spacing_standard;
+                        Button {
+                            text: card.durations[0] + "\nAgain";
 
-                        clicked => {
-                            rate(2);
-                            show_answer = false;
+                            clicked => {
+                                rate(1);
+                            }
                         }
-                    }
 
-                    Button {
-                        text: card.durations[2] + "\nGood";
+                        Button {
+                            text: card.durations[1] + "\nHard";
 
-                        clicked => {
-                            rate(3);
-                            show_answer = false;
+                            clicked => {
+                                rate(2);
+                            }
                         }
-                    }
 
-                    Button {
-                        text: card.durations[3] + "\nEasy";
+                        Button {
+                            text: card.durations[2] + "\nGood";
 
-                        clicked => {
-                            rate(4);
-                            show_answer = false;
+                            clicked => {
+                                rate(3);
+                            }
+                        }
+
+                        Button {
+                            text: card.durations[3] + "\nEasy";
+
+                            clicked => {
+                                rate(4);
+                            }
                         }
                     }
                 }
