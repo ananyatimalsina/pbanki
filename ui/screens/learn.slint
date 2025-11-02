@@ -98,12 +98,18 @@ export component LearnScreen {
                 } else {
                     if event.text == Key.LeftArrow || event.text == Key.DownArrow || event.text == Key.PageDown {
                         rate(0);
+                        show_answer = false;
+
                         accept
                     } else if event.text == Key.RightArrow || event.text == Key.Return {
                         rate(1);
+                        show_answer = false;
+
                         accept
                     } else if event.text == Key.Menu || event.text == Key.UpArrow || event.text == Key.PageUp {
                         rate(2);
+                        show_answer = false;
+
                         accept
                     }
                 }
@@ -149,6 +155,7 @@ export component LearnScreen {
 
                             clicked => {
                                 rate(rating);
+                                show_answer = false;
                             }
                         }
                     }
