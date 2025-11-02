@@ -21,7 +21,7 @@ pub struct LearnSession {
 }
 
 pub fn init_session(collection_path: &str) -> Rc<LearnSession> {
-    let col = match CollectionBuilder::new(format!("{}/collection.anki2", collection_path))
+    let mut col = match CollectionBuilder::new(format!("{}/collection.anki2", collection_path))
         .set_media_paths(
             format!("{}/collection.media/", collection_path),
             format!("{}/collection.media.db2", collection_path),
@@ -35,6 +35,15 @@ pub fn init_session(collection_path: &str) -> Rc<LearnSession> {
             panic!("Cannot continue without a valid collection.");
         }
     };
+
+    let search = "note:\"Image Occlusion Enhanced\"";
+
+    if let Ok(card_ids) = col.search_cards(search, anki::search::SortMode::NoOrder) {
+        let _ = col.bury_or_suspend_cards(
+            &card_ids,
+            anki_proto::scheduler::bury_or_suspend_cards_request::Mode::Suspend,
+        );
+    }
 
     Rc::new(LearnSession {
         collection: Rc::new(RefCell::new(col)),
