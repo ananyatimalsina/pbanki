@@ -7,10 +7,9 @@ edition = "2024"
 euclid = "0.22.11"
 rgb = "0.8.52"
 common = { path = "./common" }
-anki = { path = "third_party/anki/rslib" }
-slint = {version = "1.14.1", default-features = false, features = ["compat-1-2", "std", "software-renderer-systemfonts", "renderer-software"]}
-inkview = { git = "https://github.com/ananyatimalsina/inkview-rs", branch = "master" }
-inkview-slint = { git = "https://github.com/ananyatimalsina/inkview-rs", branch = "master" }
+slint = { git = "https://github.com/slint-ui/slint", rev = "44208ff", default-features = false, features = ["compat-1-2", "std", "software-renderer-systemfonts", "renderer-software"]}
+inkview = { git = "https://github.com/ananyatimalsina/inkview-rs", branch = "1.15.0" }
+inkview-slint = { git = "https://github.com/ananyatimalsina/inkview-rs", branch = "1.15.0" }
 tokio = { version = "1", features = ["io-util"] }
 
 [features]

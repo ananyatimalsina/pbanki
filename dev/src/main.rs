@@ -1,41 +1,7 @@
 use common::*;
 
-use std::cell::RefCell;
-use std::fs;
-use std::rc::Rc;
-
-use anki::{collection::CollectionBuilder, prelude::I18n};
-
 fn main() {
-    if let Err(e) = fs::create_dir_all("./pbanki/collection/collection.media") {
-        eprintln!("Failed to create directories: {:?}", e);
-        return;
-    }
-
-    // Create Collection directly instead of using Backend
-    let col = match CollectionBuilder::new("./pbanki/collection/collection.anki2")
-        .set_media_paths(
-            "./pbanki/collection/collection.media/",
-            "./pbanki/collection/collection.media.db2",
-        )
-        .set_tr(I18n::new(&["en"]))
-        .build()
-    {
-        Ok(col) => col,
-        Err(e) => {
-            eprintln!("Failed to open collection: {:?}", e);
-            return;
-        }
-    };
-
-    let col = Rc::new(RefCell::new(col));
-
-    let session = Rc::new(LearnSession {
-        collection: col.clone(),
-        current_card: RefCell::new(CardNode::default()),
-        states: RefCell::new(None),
-        start_time: RefCell::new(None),
-    });
+    let session = init_session("./pbanki/collection");
 
     let ui = MainWindow::new().unwrap();
 
@@ -72,3 +38,4 @@ fn main() {
 
     let _ = ui.run();
 }
+

@@ -5,6 +5,5 @@ edition = "2024"
 
 [dependencies]
 common = { path = "../common" }
-anki = { path = "../third_party/anki/rslib" }
-slint = { version = "1.14.1", default-features = false, features = ["compat-1-2", "std", "backend-winit", "software-renderer-systemfonts", "renderer-software"] }
+slint = { git = "https://github.com/slint-ui/slint", rev = "44208ff", default-features = false, features = ["compat-1-2", "std", "backend-winit", "software-renderer-systemfonts", "renderer-software"] }
 tokio = { version = "1", features = ["io-util"] }

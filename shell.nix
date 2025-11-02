@@ -2,7 +2,7 @@
   pkgs ? import <nixpkgs> { },
 }:
 let
-  overrides = (builtins.fromTOML (builtins.readFile ./third_party/anki/rust-toolchain.toml));
+  overrides = (builtins.fromTOML (builtins.readFile ./rust-toolchain.toml));
   libPath =
     with pkgs;
     lib.makeLibraryPath [

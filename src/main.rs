@@ -1,9 +1,6 @@
 use common::*;
-use std::cell::RefCell;
-use std::fs;
-use std::rc::Rc;
 
-use anki::{collection::CollectionBuilder, prelude::I18n};
+use std::rc::Rc;
 
 use inkview::Event;
 
@@ -12,43 +9,11 @@ fn main() {
 
     let (evt_tx, evt_rx) = std::sync::mpsc::channel();
 
-    if let Err(e) = fs::create_dir_all("/mnt/ext1/applications/pbanki/collection/collection.media")
-    {
-        eprintln!("Failed to create directories: {:?}", e);
-        return;
-    }
-
-    // Create Collection directly instead of using Backend
-    let col =
-        match CollectionBuilder::new("/mnt/ext1/applications/pbanki/collection/collection.anki2")
-            .set_media_paths(
-                "/mnt/ext1/applications/pbanki/collection/collection.media/",
-                "/mnt/ext1/applications/pbanki/collection/collection.media.db2",
-            )
-            .set_tr(I18n::new(&["en"]))
-            .build()
-        {
-            Ok(col) => col,
-            Err(e) => {
-                eprintln!("Failed to open collection: {:?}", e);
-                return;
-            }
-        };
-
     std::thread::spawn({
         move || {
             if evt_rx.recv().unwrap() != Event::Init {
                 panic!("expected init event first");
             }
-
-            let col = Rc::new(RefCell::new(col));
-
-            let session = Rc::new(LearnSession {
-                collection: col,
-                current_card: RefCell::new(CardNode::default()),
-                states: RefCell::new(None),
-                start_time: RefCell::new(None),
-            });
 
             // I hope this thing lives as long as the process
             let screen = inkview::screen::Screen::new(iv);
@@ -56,6 +21,8 @@ fn main() {
             let display = inkview_slint::Backend::new(screen, evt_rx);
 
             slint::platform::set_platform(Box::new(display)).unwrap();
+
+            let session = init_session("/mnt/ext1/applications/pbanki/collection");
 
             let ui = Rc::new(MainWindow::new().unwrap());
 

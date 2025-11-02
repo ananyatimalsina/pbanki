@@ -4,10 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-anki = { path = "../third_party/anki/rslib" }
-anki_proto = { path = "../third_party/anki/rslib/proto" }
-slint = {version = "1.14.1", default-features = false, features = ["compat-1-2", "std", "software-renderer-systemfonts", "renderer-software"]}
+anki = { git = "https://github.com/ankitects/anki", branch = "main" }
+anki_proto = { git = "https://github.com/ankitects/anki", branch = "main" }
+slint = { git = "https://github.com/slint-ui/slint", rev = "44208ff", default-features = false, features = ["compat-1-2", "std", "software-renderer-systemfonts", "renderer-software"]}
 tokio = { version = "1", features = ["io-util"] }
 
 [build-dependencies]
-slint-build = "1.14.1"
+slint-build = { git = "https://github.com/slint-ui/slint", rev = "44208ff" }

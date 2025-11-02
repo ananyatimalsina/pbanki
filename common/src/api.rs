@@ -7,6 +7,7 @@ use std::time::Instant;
 use anki::scheduler::answering::CardAnswer;
 use anki::scheduler::states::SchedulingStates;
 use anki::timestamp::{TimestampMillis, TimestampSecs};
+use anki::{collection::CollectionBuilder, prelude::I18n};
 
 use crate::{CardNode, DeckNode, DeckTree};
 
@@ -17,6 +18,30 @@ pub struct LearnSession {
     pub current_card: RefCell<CardNode>,
     pub states: RefCell<Option<SchedulingStates>>,
     pub start_time: RefCell<Option<Instant>>,
+}
+
+pub fn init_session(collection_path: &str) -> Rc<LearnSession> {
+    let col = match CollectionBuilder::new(format!("{}/collection.anki2", collection_path))
+        .set_media_paths(
+            format!("{}/collection.media/", collection_path),
+            format!("{}/collection.media.db2", collection_path),
+        )
+        .set_tr(I18n::new(&["en"]))
+        .build()
+    {
+        Ok(col) => col,
+        Err(e) => {
+            eprintln!("Failed to open collection: {:?}", e);
+            panic!("Cannot continue without a valid collection.");
+        }
+    };
+
+    Rc::new(LearnSession {
+        collection: Rc::new(RefCell::new(col)),
+        current_card: RefCell::new(CardNode::default()),
+        states: RefCell::new(None),
+        start_time: RefCell::new(None),
+    })
 }
 
 pub fn update_deck_tree(session: &LearnSession) -> DeckTree {
