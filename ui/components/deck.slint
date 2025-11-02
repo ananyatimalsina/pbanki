@@ -9,59 +9,61 @@ export component Deck {
     callback deck_clicked();
 
     HorizontalLayout {
-        if shown: HorizontalLayout {
-            padding-left: (deck.level - 1) * Constants.padding_standard;
+        if shown: TouchArea {
+            clicked => {
+                deck_clicked();
+            }
             HorizontalLayout {
-                alignment: start;
-                padding-top: Constants.padding_standard;
-                if deck.has_children: TouchArea {
+                padding-left: (deck.level - 1) * Constants.padding_standard;
+                HorizontalLayout {
+                    alignment: start;
+                    padding-top: Constants.padding_standard;
+                    if deck.has_children: TouchArea {
+                        Image {
+                            source: deck.collapsed ? @image-url("../icons/angle_right.svg") : @image-url("../icons/angle_down.svg");
+                        }
 
-                    Image {
-                        source: deck.collapsed ? @image-url("../icons/angle_right.svg") : @image-url("../icons/angle_down.svg");
+                        clicked => {
+                            deck.collapsed = !deck.collapsed;
+                            toggle();
+                        }
                     }
-
-                    clicked => {
-                        deck.collapsed = !deck.collapsed;
-                        toggle();
-                    }
-                }
-                TouchArea {
                     Text {
                         text: deck.name;
+                        font-family: Constants.font_family_standard;
                         font-size: Constants.font_size_content;
                         vertical-alignment: center;
                     }
+                }
 
-                    clicked => {
-                        deck_clicked();
+                HorizontalLayout {
+                    alignment: end;
+                    padding-top: Constants.padding_standard;
+                    spacing: Constants.spacing_standard;
+
+                    Text {
+                        text: deck.new;
+                        font-family: Constants.font_family_standard;
+                        color: #808080;
+                        font-size: Constants.font_size_subcontent;
+                        vertical-alignment: center;
                     }
-                }
-            }
 
-            HorizontalLayout {
-                alignment: end;
-                padding-top: Constants.padding_standard;
-                spacing: Constants.spacing_standard;
+                    Text {
+                        text: deck.learn;
+                        font-family: Constants.font_family_standard;
+                        color: #808080;
+                        font-size: Constants.font_size_subcontent;
+                        vertical-alignment: center;
+                    }
 
-                Text {
-                    text: deck.new;
-                    color: #808080;
-                    font-size: Constants.font_size_subcontent;
-                    vertical-alignment: center;
-                }
-
-                Text {
-                    text: deck.learn;
-                    color: #808080;
-                    font-size: Constants.font_size_subcontent;
-                    vertical-alignment: center;
-                }
-
-                Text {
-                    text: deck.due;
-                    color: #008000;
-                    font-size: Constants.font_size_subcontent;
-                    vertical-alignment: center;
+                    Text {
+                        text: deck.due;
+                        font-family: Constants.font_family_standard;
+                        color: #008000;
+                        font-size: Constants.font_size_subcontent;
+                        vertical-alignment: center;
+                    }
                 }
             }
         }

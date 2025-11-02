@@ -1,7 +1,7 @@
 import { Constants } from "../constants.slint";
 import { DeckNode, CardNode } from "../types.slint";
 import { Card } from "../components/card.slint";
-import { Button } from "std-widgets.slint";
+import { Button, ListView } from "std-widgets.slint";
 import { RatingButton } from "../components/rating_button.slint";
 
 component Menu {
@@ -31,6 +31,7 @@ component Menu {
 
             Text {
                 text: card.deck.new;
+                font-family: Constants.font_family_standard;
                 color: #0000FF;
                 font-size: Constants.font_size_subcontent;
                 vertical-alignment: center;
@@ -38,6 +39,7 @@ component Menu {
 
             Text {
                 text: card.deck.learn;
+                font-family: Constants.font_family_standard;
                 color: #FF0000;
                 font-size: Constants.font_size_subcontent;
                 vertical-alignment: center;
@@ -45,6 +47,7 @@ component Menu {
 
             Text {
                 text: card.deck.due;
+                font-family: Constants.font_family_standard;
                 color: #008000;
                 font-size: Constants.font_size_subcontent;
                 vertical-alignment: center;
@@ -108,7 +111,6 @@ export component LearnScreen {
             reject
         }
         VerticalLayout {
-            alignment: start;
             Menu {
                 card: card;
                 home_clicked => {
@@ -117,39 +119,37 @@ export component LearnScreen {
             }
 
             Card {
+                vertical-stretch: 1;
                 card: card;
                 show_answer: show_answer;
             }
-        }
 
-        if valid_deck: VerticalLayout {
-            alignment: end;
-            HorizontalLayout {
-                alignment: center;
-                padding-top: Constants.padding_standard;
-                Button {
-                    visible: !show_answer;
-                    width: show_answer ? 0 : self.preferred-width * 2;
-                    height: show_answer ? 0 : self.preferred-height * 2;
-                    text: "Show Answer";
-
-                    clicked => {
-                        show_answer = true;
-                    }
-                }
-
+            if valid_deck: VerticalLayout {
+                alignment: end;
                 HorizontalLayout {
-                    visible: show_answer;
-                    width: show_answer ? self.preferred-width : 0;
-                    height: show_answer ? self.preferred-height : 0;
-                    spacing: Constants.spacing_medium;
-                    for rating in 4: RatingButton {
-                        duration: card.durations[rating];
-                        label: rating == 0 ? "Again" : rating == 1 ? "Hard" : rating == 2 ? "Good" : "Easy";
-                        color: rating == 0 ? #FF0000 : rating == 2 ? #008000 : rating == 3 ? #0000FF : #000000;
+                    alignment: center;
+                    padding-top: Constants.padding_standard;
+
+                    if !show_answer: Button {
+                        width: self.preferred-width * 2;
+                        height: self.preferred-height * 2;
+                        text: "Show Answer";
 
                         clicked => {
-                            rate(rating);
+                            show_answer = true;
+                        }
+                    }
+
+                    if show_answer: HorizontalLayout {
+                        spacing: Constants.spacing_medium;
+                        for rating in 4: RatingButton {
+                            duration: card.durations[rating];
+                            label: rating == 0 ? "Again" : rating == 1 ? "Hard" : rating == 2 ? "Good" : "Easy";
+                            color: rating == 0 ? #FF0000 : rating == 2 ? #008000 : rating == 3 ? #0000FF : #000000;
+
+                            clicked => {
+                                rate(rating);
+                            }
                         }
                     }
                 }
