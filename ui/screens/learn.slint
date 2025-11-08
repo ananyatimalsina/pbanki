@@ -2,7 +2,6 @@ import { Constants } from "../constants.slint";
 import { DeckNode, CardNode } from "../types.slint";
 import { Button, ListView, ScrollView } from "std-widgets.slint";
 import { RatingButton } from "../components/rating_button.slint";
-import { PageView } from "../components/page_view.slint";
 
 component Menu {
     in property <CardNode> card;
@@ -87,8 +86,10 @@ export component LearnScreen {
     out property <int> current-page: 0;
     property <int> total-pages: pages.length;
 
-    changed pages => {
-        current-page = 0;
+    changed total-pages => {
+        if current-page > total-pages {
+            current-page = 0;
+        }
     }
 
     callback home_clicked();
@@ -105,27 +106,25 @@ export component LearnScreen {
                 } else if current-page < total-pages - 1 && (event.text == Key.RightArrow || event.text == Key.UpArrow || event.text == Key.PageUp) {
                     current-page += 1;
                     accept
-                } else {
-                    if !show_answer {
-                        show_answer = true;
+                } else if !show_answer && (current-page == total-pages - 1 || current-page == 0) {
+                    show_answer = true;
+                    accept
+                } else if show_answer && (current-page == total-pages - 1 || current-page == 0) {
+                    if event.text == Key.LeftArrow || event.text == Key.DownArrow || event.text == Key.PageDown {
+                        rate(0);
+                        show_answer = false;
+
                         accept
-                    } else {
-                        if event.text == Key.LeftArrow || event.text == Key.DownArrow || event.text == Key.PageDown {
-                            rate(0);
-                            show_answer = false;
+                    } else if event.text == Key.RightArrow || event.text == Key.Return {
+                        rate(1);
+                        show_answer = false;
 
-                            accept
-                        } else if event.text == Key.RightArrow || event.text == Key.Return {
-                            rate(1);
-                            show_answer = false;
+                        accept
+                    } else if event.text == Key.Menu || event.text == Key.UpArrow || event.text == Key.PageUp {
+                        rate(2);
+                        show_answer = false;
 
-                            accept
-                        } else if event.text == Key.Menu || event.text == Key.UpArrow || event.text == Key.PageUp {
-                            rate(2);
-                            show_answer = false;
-
-                            accept
-                        }
+                        accept
                     }
                 }
             }
@@ -142,11 +141,32 @@ export component LearnScreen {
                     }
                 }
 
-                PageView {
-                    vertical-stretch: 1;
-                    pages: pages;
-                    current-page: current-page;
-                    total-pages: total-pages;
+                sgr := SwipeGestureHandler {
+                    handle-swipe-down: current-page > 0;
+                    handle-swipe-up: current-page < total-pages - 1;
+                    swiped => {
+                        if self.current-position.y > self.pressed-position.y + self.height / 4 {
+                            if current-page > 0 {
+                                current-page -= 1;
+                            }
+                        } else if self.current-position.y < self.pressed-position.y - self.height / 4 {
+                            if current-page < total-pages - 1 {
+                                current-page += 1;
+                            }
+                        }
+                    }
+
+                    VerticalLayout {
+                        Text {
+                            text: (current-page < pages.length ? pages[current-page] : "") + (pages.length > 1 ? "\n\n(Page " + (current-page + 1) + " of " + total-pages + ")" : "");
+                            font-family: Constants.font_family_standard;
+                            font-size: Constants.font_size_content;
+                            wrap: TextWrap.word-wrap;
+                            overflow: TextOverflow.clip;
+                            vertical-alignment: center;
+                            horizontal-alignment: center;
+                        }
+                    }
                 }
             }
 
