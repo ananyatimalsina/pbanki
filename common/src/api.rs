@@ -1,5 +1,3 @@
-use crate::utils::remove_double_brackets;
-
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::time::Instant;
@@ -130,10 +128,9 @@ pub fn next_card(session: &LearnSession, deck: DeckNode, chars_per_page: i32) ->
             id: card.card.id().0,
             deck: updated_deck,
             question: Rc::new(slint::VecModel::from(
-                crate::utils::paginate_text(
-                    &remove_double_brackets(
-                        &anki::text::strip_html(rendered.question().as_ref()).into_owned(),
-                    ),
+                crate::utils::strip_html_remove_brackets_and_paginate(
+                    rendered.question().as_ref(),
+                    true,
                     chars_per_page as usize,
                 )
                 .into_iter()
@@ -170,7 +167,12 @@ pub fn next_card(session: &LearnSession, deck: DeckNode, chars_per_page: i32) ->
     }
 }
 
-pub fn rate_card(session: &LearnSession, rating: i32, deck: DeckNode, chars_per_page: i32) -> CardNode {
+pub fn rate_card(
+    session: &LearnSession,
+    rating: i32,
+    deck: DeckNode,
+    chars_per_page: i32,
+) -> CardNode {
     let card = session.current_card.borrow().clone();
     let states = session.states.borrow().clone();
 
