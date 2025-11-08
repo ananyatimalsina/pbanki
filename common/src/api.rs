@@ -70,22 +70,17 @@ pub fn next_card(session: &LearnSession, deck: DeckNode, chars_per_page: i32) ->
     let mut col_borrow = session.collection.borrow_mut();
     let _ = col_borrow.set_current_deck(anki::decks::DeckId(deck.id));
     let queued_cards = col_borrow.get_queued_cards(1, false).unwrap();
-    drop(col_borrow);
     let queued_card = queued_cards.cards.first();
 
     if let Some(card) = queued_card {
         *session.start_time.borrow_mut() = Some(Instant::now());
         *session.states.borrow_mut() = Some(card.states.clone());
 
-        let durations = session
-            .collection
-            .borrow_mut()
+        let durations = col_borrow
             .describe_next_states(&card.states)
             .unwrap_or_else(|_| vec!["".into(); 4]);
 
-        let rendered = session
-            .collection
-            .borrow_mut()
+        let rendered = col_borrow
             .render_existing_card(card.card.id(), false, false)
             .unwrap();
 
@@ -93,21 +88,12 @@ pub fn next_card(session: &LearnSession, deck: DeckNode, chars_per_page: i32) ->
 
         // Handle special case for type in cards
         if answer.contains("[[type:") {
-            let note_opt = session
-                .collection
-                .borrow_mut()
-                .storage
-                .get_note(card.card.note_id())
-                .unwrap();
+            let note_opt = col_borrow.storage.get_note(card.card.note_id()).unwrap();
 
             if let Some(note) = note_opt {
                 let fields = note.fields();
                 let notetype_id = note.notetype_id;
-                let notetype = session
-                    .collection
-                    .borrow_mut()
-                    .get_notetype(notetype_id)
-                    .unwrap();
+                let notetype = col_borrow.get_notetype(notetype_id).unwrap();
 
                 if let Some(notetype) = notetype {
                     for (index, field) in notetype.fields.iter().enumerate() {
@@ -118,6 +104,7 @@ pub fn next_card(session: &LearnSession, deck: DeckNode, chars_per_page: i32) ->
                 }
             }
         }
+        drop(col_borrow);
         let updated_deck = DeckNode {
             new: queued_cards.new_count as i32,
             learn: queued_cards.learning_count as i32,
@@ -154,8 +141,8 @@ pub fn next_card(session: &LearnSession, deck: DeckNode, chars_per_page: i32) ->
             .into(),
         };
 
-        *session.current_card.borrow_mut() = card_node.clone();
-        card_node
+        *session.current_card.borrow_mut() = card_node;
+        session.current_card.borrow().clone()
     } else {
         CardNode {
             id: -1,
@@ -173,10 +160,10 @@ pub fn rate_card(
     deck: DeckNode,
     chars_per_page: i32,
 ) -> CardNode {
-    let card = session.current_card.borrow().clone();
+    let card_id = session.current_card.borrow().id;
     let states = session.states.borrow().clone();
 
-    if card.id == -1 || states.is_none() {
+    if card_id == -1 || states.is_none() {
         return CardNode {
             id: -1,
             deck,
@@ -222,7 +209,7 @@ pub fn rate_card(
     };
 
     let mut answer = CardAnswer {
-        card_id: anki::card::CardId(card.id),
+        card_id: anki::card::CardId(card_id),
         current_state: states.current.clone(),
         new_state,
         rating: rating_enum,
