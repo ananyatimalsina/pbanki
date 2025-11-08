@@ -1,8 +1,8 @@
 import { Constants } from "../constants.slint";
 import { DeckNode, CardNode } from "../types.slint";
-import { Card } from "../components/card.slint";
-import { Button, ListView } from "std-widgets.slint";
+import { Button, ListView, ScrollView } from "std-widgets.slint";
 import { RatingButton } from "../components/rating_button.slint";
+import { PageView } from "../components/page_view.slint";
 
 component Menu {
     in property <CardNode> card;
@@ -82,7 +82,14 @@ component Menu {
 export component LearnScreen {
     in property <CardNode> card;
     in-out property <bool> show_answer;
-    property <bool> valid_deck: card.question != "No cards due!" && card.answer != "";
+    property <bool> valid_deck: card.question != ["No cards due!"] && card.answer != [];
+    property <[string]> pages: show_answer ? card.answer : card.question;
+    out property <int> current-page: 0;
+    property <int> total-pages: pages.length;
+
+    changed pages => {
+        current-page = 0;
+    }
 
     callback home_clicked();
     callback rate(rating: int);
@@ -92,42 +99,55 @@ export component LearnScreen {
     focus-scope := FocusScope {
         key-pressed(event) => {
             if valid_deck {
-                if !show_answer {
-                    show_answer = true;
+                if current-page > 0 && (event.text == Key.LeftArrow || event.text == Key.DownArrow || event.text == Key.PageDown) {
+                    current-page -= 1;
+                    accept
+                } else if current-page < total-pages - 1 && (event.text == Key.RightArrow || event.text == Key.UpArrow || event.text == Key.PageUp) {
+                    current-page += 1;
                     accept
                 } else {
-                    if event.text == Key.LeftArrow || event.text == Key.DownArrow || event.text == Key.PageDown {
-                        rate(0);
-                        show_answer = false;
-
+                    if !show_answer {
+                        show_answer = true;
                         accept
-                    } else if event.text == Key.RightArrow || event.text == Key.Return {
-                        rate(1);
-                        show_answer = false;
+                    } else {
+                        if event.text == Key.LeftArrow || event.text == Key.DownArrow || event.text == Key.PageDown {
+                            rate(0);
+                            show_answer = false;
 
-                        accept
-                    } else if event.text == Key.Menu || event.text == Key.UpArrow || event.text == Key.PageUp {
-                        rate(2);
-                        show_answer = false;
+                            accept
+                        } else if event.text == Key.RightArrow || event.text == Key.Return {
+                            rate(1);
+                            show_answer = false;
 
-                        accept
+                            accept
+                        } else if event.text == Key.Menu || event.text == Key.UpArrow || event.text == Key.PageUp {
+                            rate(2);
+                            show_answer = false;
+
+                            accept
+                        }
                     }
                 }
             }
             reject
         }
-        VerticalLayout {
-            Menu {
-                card: card;
-                home_clicked => {
-                    home_clicked();
-                }
-            }
 
-            Card {
-                vertical-stretch: 1;
-                card: card;
-                show_answer: show_answer;
+        VerticalLayout {
+            VerticalLayout {
+                alignment: start;
+                Menu {
+                    card: card;
+                    home_clicked => {
+                        home_clicked();
+                    }
+                }
+
+                PageView {
+                    vertical-stretch: 1;
+                    pages: pages;
+                    current-page: current-page;
+                    total-pages: total-pages;
+                }
             }
 
             if valid_deck: VerticalLayout {

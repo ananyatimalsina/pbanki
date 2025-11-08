@@ -68,7 +68,7 @@ pub fn update_deck_tree(session: &LearnSession) -> DeckTree {
     }
 }
 
-pub fn next_card(session: &LearnSession, deck: DeckNode) -> CardNode {
+pub fn next_card(session: &LearnSession, deck: DeckNode, chars_per_page: i32) -> CardNode {
     let mut col_borrow = session.collection.borrow_mut();
     let _ = col_borrow.set_current_deck(anki::decks::DeckId(deck.id));
     let queued_cards = col_borrow.get_queued_cards(1, false).unwrap();
@@ -129,11 +129,25 @@ pub fn next_card(session: &LearnSession, deck: DeckNode) -> CardNode {
         let card_node = CardNode {
             id: card.card.id().0,
             deck: updated_deck,
-            question: remove_double_brackets(
-                &anki::text::strip_html(rendered.question().as_ref()).into_owned(),
-            )
+            question: Rc::new(slint::VecModel::from(
+                crate::utils::paginate_text(
+                    &remove_double_brackets(
+                        &anki::text::strip_html(rendered.question().as_ref()).into_owned(),
+                    ),
+                    chars_per_page as usize,
+                )
+                .into_iter()
+                .map(|s| s.into())
+                .collect::<Vec<slint::SharedString>>(),
+            ))
             .into(),
-            answer: answer.into(),
+            answer: Rc::new(slint::VecModel::from(
+                crate::utils::paginate_text(&answer, chars_per_page as usize)
+                    .into_iter()
+                    .map(|s| s.into())
+                    .collect::<Vec<slint::SharedString>>(),
+            ))
+            .into(),
             durations: Rc::new(slint::VecModel::from(
                 durations
                     .into_iter()
@@ -149,14 +163,14 @@ pub fn next_card(session: &LearnSession, deck: DeckNode) -> CardNode {
         CardNode {
             id: -1,
             deck,
-            question: "No more cards due!".into(),
-            answer: "".into(),
+            question: ModelRc::new(slint::VecModel::from(vec!["No more cards due!".into()])),
+            answer: ModelRc::new(slint::VecModel::default()),
             durations: ModelRc::new(slint::VecModel::default()),
         }
     }
 }
 
-pub fn rate_card(session: &LearnSession, rating: i32, deck: DeckNode) -> CardNode {
+pub fn rate_card(session: &LearnSession, rating: i32, deck: DeckNode, chars_per_page: i32) -> CardNode {
     let card = session.current_card.borrow().clone();
     let states = session.states.borrow().clone();
 
@@ -164,8 +178,8 @@ pub fn rate_card(session: &LearnSession, rating: i32, deck: DeckNode) -> CardNod
         return CardNode {
             id: -1,
             deck,
-            question: "No more cards due!".into(),
-            answer: "".into(),
+            question: ModelRc::new(slint::VecModel::from(vec!["No more cards due!".into()])),
+            answer: ModelRc::new(slint::VecModel::default()),
             durations: ModelRc::new(slint::VecModel::default()),
         };
     }
@@ -198,8 +212,8 @@ pub fn rate_card(session: &LearnSession, rating: i32, deck: DeckNode) -> CardNod
             return CardNode {
                 id: -1,
                 deck,
-                question: "No more cards due!".into(),
-                answer: "".into(),
+                question: ModelRc::new(slint::VecModel::from(vec!["No more cards due!".into()])),
+                answer: ModelRc::new(slint::VecModel::default()),
                 durations: ModelRc::new(slint::VecModel::default()),
             };
         }
@@ -218,5 +232,5 @@ pub fn rate_card(session: &LearnSession, rating: i32, deck: DeckNode) -> CardNod
 
     let _ = session.collection.borrow_mut().answer_card(&mut answer);
 
-    next_card(session, deck)
+    next_card(session, deck, chars_per_page)
 }

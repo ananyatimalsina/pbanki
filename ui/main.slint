@@ -12,9 +12,14 @@ export component MainWindow inherits Window {
     in-out property <DeckTree> deck_tree;
     in property <string> dummy: "ÄÖÜäöüßÀÂÆÇÈÉÊËÎÏÔŒÙÛàâæçèéêëîïôœùû„“”‘’—–@&$%+=¡¿¢£$¥€²³¼½¬¤¦§©®™°";
 
+    property <length> available-content-height: root.height - 3 * Constants.font_size_content - 2 * Constants.padding_standard - 100px;
+    property <length> available-content-width: root.width - 2 * Constants.padding_standard;
+    property <int> chars-per-page: 
+        Math.floor(available-content-width / (Constants.font_size_content * 0.6)) * Math.floor(available-content-height / (Constants.font_size_content * 1.3));
+
     callback update_deck_tree();
-    callback deck_clicked(deck: DeckNode);
-    callback rate(rating: int, deck: DeckNode);
+    callback deck_clicked(deck: DeckNode, chars-per-page: int);
+    callback rate(rating: int, deck: DeckNode, chars-per-page: int);
 
     VerticalLayout {
         padding: Constants.padding_standard;
@@ -22,7 +27,7 @@ export component MainWindow inherits Window {
             due_total: deck_tree.due_total;
             deck_nodes: deck_tree.deck_nodes;
             deck_clicked(deck) => {
-                deck_clicked(deck);
+                deck_clicked(deck, chars-per-page);
                 learning = true;
             }
         }
@@ -33,7 +38,7 @@ export component MainWindow inherits Window {
                 learning = false;
             }
             rate(rating) => {
-                rate(rating, current_card.deck);
+                rate(rating, current_card.deck, chars-per-page);
             }
             init => {
                 self.focus();

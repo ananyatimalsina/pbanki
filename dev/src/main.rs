@@ -17,8 +17,8 @@ fn main() {
     let session_for_rate = session.clone();
     let ui_weak_for_rate = ui.as_weak();
 
-    ui.on_rate(move |rating, deck| {
-        let next = rate_card(&session_for_rate, rating, deck);
+    ui.on_rate(move |rating, deck, chars_per_page| {
+        let next = rate_card(&session_for_rate, rating, deck, chars_per_page);
         if let Some(ui) = ui_weak_for_rate.upgrade() {
             ui.set_current_card(next);
         }
@@ -27,8 +27,8 @@ fn main() {
     let session_for_deck = session.clone();
     let ui_weak_for_deck = ui.as_weak();
 
-    ui.on_deck_clicked(move |deck| {
-        let next = next_card(&session_for_deck, deck);
+    ui.on_deck_clicked(move |deck, chars_per_page| {
+        let next = next_card(&session_for_deck, deck, chars_per_page);
         if let Some(ui) = ui_weak_for_deck.upgrade() {
             ui.set_current_card(next);
         }

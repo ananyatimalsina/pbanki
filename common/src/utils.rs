@@ -44,8 +44,7 @@ pub fn remove_double_brackets(input: &str) -> String {
         if !skipping {
             if c == '[' {
                 if let Some(&'[') = chars.peek() {
-                    // Found opening [[, start skipping
-                    chars.next(); // consume second '['
+                    chars.next();
                     skipping = true;
                     continue;
                 } else {
@@ -55,14 +54,50 @@ pub fn remove_double_brackets(input: &str) -> String {
                 output.push(c);
             }
         } else {
-            // Currently skipping until finding ]]
             if c == ']' {
                 if let Some(&']') = chars.peek() {
-                    chars.next(); // consume second ']'
+                    chars.next();
                     skipping = false;
                 }
             }
         }
     }
     output
+}
+
+pub fn paginate_text(text: &str, chars_per_page: usize) -> Vec<String> {
+    if text.is_empty() {
+        return vec![String::new()];
+    }
+    
+    let mut pages = Vec::new();
+    let mut current_page = String::new();
+    let mut current_len = 0;
+    
+    for word in text.split_whitespace() {
+        let word_len = word.chars().count();
+        
+        if current_len + word_len + 1 > chars_per_page && !current_page.is_empty() {
+            pages.push(current_page.trim().to_string());
+            current_page = String::new();
+            current_len = 0;
+        }
+        
+        if !current_page.is_empty() {
+            current_page.push(' ');
+            current_len += 1;
+        }
+        current_page.push_str(word);
+        current_len += word_len;
+    }
+    
+    if !current_page.is_empty() {
+        pages.push(current_page.trim().to_string());
+    }
+    
+    if pages.is_empty() {
+        pages.push(String::new());
+    }
+    
+    pages
 }

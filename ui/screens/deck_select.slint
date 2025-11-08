@@ -49,6 +49,7 @@ export component DeckSelectScreen {
         }
 
         ListView {
+            mouse-drag-pan-enabled: true;
             for deck[index] in deck_nodes: Deck {
                 deck: deck;
                 shown: deck_nodes[deck.parent_index].collapsed == false;
