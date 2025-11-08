@@ -35,39 +35,9 @@ fn flatten_tree_recursive(
     }
 }
 
-pub fn remove_double_brackets(input: &str) -> String {
-    let mut output = String::with_capacity(input.len());
-    let mut chars = input.chars().peekable();
-    let mut skipping = false;
-
-    while let Some(c) = chars.next() {
-        if !skipping {
-            if c == '[' {
-                if let Some(&'[') = chars.peek() {
-                    chars.next();
-                    skipping = true;
-                    continue;
-                } else {
-                    output.push(c);
-                }
-            } else {
-                output.push(c);
-            }
-        } else {
-            if c == ']' {
-                if let Some(&']') = chars.peek() {
-                    chars.next();
-                    skipping = false;
-                }
-            }
-        }
-    }
-    output
-}
-
-pub fn paginate_text(text: &str, chars_per_page: usize) -> Vec<String> {
+pub fn paginate_text(text: &str, chars_per_page: usize) -> Vec<slint::SharedString> {
     if text.is_empty() {
-        return vec![String::new()];
+        return vec![slint::SharedString::new()];
     }
 
     let estimated_pages = (text.len() / chars_per_page).max(1);
@@ -81,8 +51,8 @@ pub fn paginate_text(text: &str, chars_per_page: usize) -> Vec<String> {
         let space_needed = if first_word_in_page { 0 } else { 1 };
 
         if current_len + word_len + space_needed > chars_per_page && !current_page.is_empty() {
-            pages.push(current_page);
-            current_page = String::with_capacity(chars_per_page);
+            pages.push(current_page.as_str().into());
+            current_page.clear();
             current_len = 0;
             first_word_in_page = true;
         }
@@ -97,11 +67,11 @@ pub fn paginate_text(text: &str, chars_per_page: usize) -> Vec<String> {
     }
 
     if !current_page.is_empty() {
-        pages.push(current_page);
+        pages.push(current_page.as_str().into());
     }
 
     if pages.is_empty() {
-        pages.push(String::new());
+        pages.push(slint::SharedString::new());
     }
 
     pages
@@ -111,12 +81,12 @@ pub fn strip_html_remove_brackets_and_paginate(
     html: &str,
     remove_brackets: bool,
     chars_per_page: usize,
-) -> Vec<String> {
+) -> Vec<slint::SharedString> {
     let stripped = anki::text::strip_html(html);
     let text = stripped.as_ref();
 
     if text.is_empty() {
-        return vec![String::new()];
+        return vec![slint::SharedString::new()];
     }
 
     let estimated_pages = (text.len() / chars_per_page).max(1);
@@ -158,8 +128,8 @@ pub fn strip_html_remove_brackets_and_paginate(
                 if current_len + word_len + space_needed > chars_per_page
                     && !current_page.is_empty()
                 {
-                    pages.push(current_page);
-                    current_page = String::with_capacity(chars_per_page);
+                    pages.push(current_page.as_str().into());
+                    current_page.clear();
                     current_len = 0;
                     first_word_in_page = true;
                 }
@@ -183,8 +153,8 @@ pub fn strip_html_remove_brackets_and_paginate(
         let space_needed = if first_word_in_page { 0 } else { 1 };
 
         if current_len + word_len + space_needed > chars_per_page && !current_page.is_empty() {
-            pages.push(current_page);
-            current_page = String::with_capacity(chars_per_page);
+            pages.push(current_page.as_str().into());
+            current_page.clear();
             first_word_in_page = true;
         }
 
@@ -195,11 +165,11 @@ pub fn strip_html_remove_brackets_and_paginate(
     }
 
     if !current_page.is_empty() {
-        pages.push(current_page);
+        pages.push(current_page.as_str().into());
     }
 
     if pages.is_empty() {
-        pages.push(String::new());
+        pages.push(slint::SharedString::new());
     }
 
     pages

@@ -120,16 +120,10 @@ pub fn next_card(session: &LearnSession, deck: DeckNode, chars_per_page: i32) ->
                     true,
                     chars_per_page as usize,
                 )
-                .into_iter()
-                .map(|s| s.into())
-                .collect::<Vec<slint::SharedString>>(),
             ))
             .into(),
             answer: Rc::new(slint::VecModel::from(
                 crate::utils::paginate_text(&answer, chars_per_page as usize)
-                    .into_iter()
-                    .map(|s| s.into())
-                    .collect::<Vec<slint::SharedString>>(),
             ))
             .into(),
             durations: Rc::new(slint::VecModel::from(
