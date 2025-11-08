@@ -17,8 +17,15 @@ default = []
 sdk-6-8 = ["inkview/sdk-6-8"]
 
 [profile.release]
-opt-level = "z"
-lto = true
+opt-level = 3
+lto = "fat"
 codegen-units = 1
 strip = true
 panic = "abort"
+overflow-checks = false
+debug-assertions = false
+incremental = false
+
+[profile.release.package."*"]
+opt-level = 3
+overflow-checks = false
