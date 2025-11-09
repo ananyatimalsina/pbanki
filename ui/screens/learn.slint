@@ -10,9 +10,10 @@ component Menu {
     HorizontalLayout {
         padding-bottom: Constants.padding_standard;
         HorizontalLayout {
-            width: 33.33%;
+            horizontal-stretch: 1;
             alignment: start;
             TouchArea {
+
                 Image {
                     source: @image-url("../icons/home.svg");
                 }
@@ -24,8 +25,6 @@ component Menu {
         }
 
         HorizontalLayout {
-            width: 33.33%;
-            alignment: center;
             spacing: Constants.spacing_standard;
 
             Text {
@@ -54,26 +53,8 @@ component Menu {
         }
 
         HorizontalLayout {
-            width: 33.33%;
+            horizontal-stretch: 1;
             alignment: end;
-            spacing: Constants.spacing_standard;
-            TouchArea {
-                Image {
-                    source: @image-url("../icons/undo.svg");
-                }
-
-                clicked => {
-                }
-            }
-
-            TouchArea {
-                Image {
-                    source: @image-url("../icons/redo.svg");
-                }
-
-                clicked => {
-                }
-            }
         }
     }
 }

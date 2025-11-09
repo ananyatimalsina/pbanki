@@ -13,7 +13,7 @@ use slint::ModelRc;
 
 pub struct LearnSession {
     pub collection: Rc<RefCell<anki::collection::Collection>>,
-    pub current_card: RefCell<CardNode>,
+    pub current_card: RefCell<Option<i64>>,
     pub states: RefCell<Option<SchedulingStates>>,
     pub start_time: RefCell<Option<Instant>>,
 }
@@ -45,7 +45,7 @@ pub fn init_session(collection_path: &str) -> Rc<LearnSession> {
 
     Rc::new(LearnSession {
         collection: Rc::new(RefCell::new(col)),
-        current_card: RefCell::new(CardNode::default()),
+        current_card: RefCell::new(None),
         states: RefCell::new(None),
         start_time: RefCell::new(None),
     })
@@ -119,12 +119,13 @@ pub fn next_card(session: &LearnSession, deck: DeckNode, chars_per_page: i32) ->
                     rendered.question().as_ref(),
                     true,
                     chars_per_page as usize,
-                )
+                ),
             ))
             .into(),
-            answer: Rc::new(slint::VecModel::from(
-                crate::utils::paginate_text(&answer, chars_per_page as usize)
-            ))
+            answer: Rc::new(slint::VecModel::from(crate::utils::paginate_text(
+                &answer,
+                chars_per_page as usize,
+            )))
             .into(),
             durations: Rc::new(slint::VecModel::from(
                 durations
@@ -135,8 +136,8 @@ pub fn next_card(session: &LearnSession, deck: DeckNode, chars_per_page: i32) ->
             .into(),
         };
 
-        *session.current_card.borrow_mut() = card_node;
-        session.current_card.borrow().clone()
+        *session.current_card.borrow_mut() = card_node.id.into();
+        card_node
     } else {
         CardNode {
             id: -1,
@@ -154,7 +155,7 @@ pub fn rate_card(
     deck: DeckNode,
     chars_per_page: i32,
 ) -> CardNode {
-    let card_id = session.current_card.borrow().id;
+    let card_id = session.current_card.borrow().unwrap_or(-1);
     let states = session.states.borrow().clone();
 
     if card_id == -1 || states.is_none() {
