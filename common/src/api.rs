@@ -7,7 +7,7 @@ use anki::scheduler::states::SchedulingStates;
 use anki::timestamp::{TimestampMillis, TimestampSecs};
 use anki::{collection::CollectionBuilder, prelude::I18n};
 
-use crate::{CardNode, DeckNode, DeckTree};
+use crate::{CardNode, DeckNode, DeckTree, Translations};
 
 use slint::ModelRc;
 
@@ -18,13 +18,16 @@ pub struct LearnSession {
     pub start_time: RefCell<Option<Instant>>,
 }
 
-pub fn init_session(collection_path: &str) -> Rc<LearnSession> {
+pub fn init_session(config: &crate::config::Config) -> Rc<LearnSession> {
+    let collection_path = &config.general.collection_path;
+    let language = &config.general.language;
+
     let mut col = match CollectionBuilder::new(format!("{}/collection.anki2", collection_path))
         .set_media_paths(
             format!("{}/collection.media/", collection_path),
             format!("{}/collection.media.db2", collection_path),
         )
-        .set_tr(I18n::new(&["en"]))
+        .set_tr(I18n::new(&[language.as_str()]))
         .build()
     {
         Ok(col) => col,
@@ -49,6 +52,34 @@ pub fn init_session(collection_path: &str) -> Rc<LearnSession> {
         states: RefCell::new(None),
         start_time: RefCell::new(None),
     })
+}
+
+pub fn init_translations(session: &LearnSession) -> Translations {
+    let col_borrow = session.collection.borrow();
+    let i181 = col_borrow.tr();
+
+    Translations {
+        show_answer: i181.studying_show_answer().as_ref().into(),
+        again: i181.studying_again().as_ref().into(),
+        hard: i181.studying_hard().as_ref().into(),
+        good: i181.studying_good().as_ref().into(),
+        easy: i181.studying_easy().as_ref().into(),
+        cards_due_suffix: {
+            let full = i181.statistics_cards_due(0);
+            full.as_ref().replace("0", "").into()
+        },
+        no_cards_due: i181.studying_no_cards_are_due_yet().as_ref().into(),
+        show: i181.importing_show().as_ref().into(),
+        of: {
+            let full = i181.statistics_amount_of_total_with_percentage(0, 0, 0);
+            let parts: Vec<&str> = full.as_ref().split_whitespace().collect();
+            if parts.len() >= 3 {
+                format!(" {} ", parts[1]).into()
+            } else {
+                " of ".into()
+            }
+        },
+    }
 }
 
 pub fn update_deck_tree(session: &LearnSession) -> DeckTree {

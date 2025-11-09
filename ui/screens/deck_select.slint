@@ -1,9 +1,10 @@
 import { ListView } from "std-widgets.slint";
 import { Deck } from "../components/deck.slint";
-import { Constants } from "../constants.slint";
+import { Constants, Translations } from "../constants.slint";
 import { DeckNode } from "../types.slint";
 
 component Menu {
+    in property <Translations> tr;
     in property <int> due;
 
     HorizontalLayout {
@@ -18,7 +19,7 @@ component Menu {
             }
 
             Text {
-                text: due + " cards due";
+                text: due + tr.cards_due_suffix;
                 font-family: Constants.font_family_standard;
             }
         }
@@ -38,6 +39,7 @@ component Menu {
 }
 
 export component DeckSelectScreen {
+    in property <Translations> tr;
     in property <int> due_total;
     in-out property <[DeckNode]> deck_nodes;
 
@@ -46,6 +48,7 @@ export component DeckSelectScreen {
     VerticalLayout {
         Menu {
             due: due_total;
+            tr: tr;
         }
 
         ListView {

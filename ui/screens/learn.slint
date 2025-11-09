@@ -1,4 +1,4 @@
-import { Constants } from "../constants.slint";
+import { Constants, Translations } from "../constants.slint";
 import { DeckNode, CardNode } from "../types.slint";
 import { Button, ListView, ScrollView } from "std-widgets.slint";
 import { RatingButton } from "../components/rating_button.slint";
@@ -60,9 +60,10 @@ component Menu {
 }
 
 export component LearnScreen {
+    in property <Translations> tr;
     in property <CardNode> card;
     in-out property <bool> show_answer;
-    property <bool> valid_deck: card.question != ["No cards due!"] && card.answer != [];
+    property <bool> valid_deck: card.id != (-1 * 1ms) && card.answer != [];
     property <[string]> pages: show_answer ? card.answer : card.question;
     out property <int> current-page: 0;
     property <int> total-pages: pages.length;
@@ -139,7 +140,7 @@ export component LearnScreen {
 
                     VerticalLayout {
                         Text {
-                            text: (current-page < pages.length ? pages[current-page] : "") + (pages.length > 1 ? "\n\n(Page " + (current-page + 1) + " of " + total-pages + ")" : "");
+                            text: (current-page < pages.length ? pages[current-page] : "") + (pages.length > 1 ? "\n\n(" + tr.show + " " + (current-page + 1) + tr.of + total-pages + ")" : "");
                             font-family: Constants.font_family_standard;
                             font-size: Constants.font_size_content;
                             wrap: TextWrap.word-wrap;
@@ -160,7 +161,7 @@ export component LearnScreen {
                     if !show_answer: Button {
                         width: self.preferred-width * 2;
                         height: self.preferred-height * 2;
-                        text: "Show Answer";
+                        text: tr.show-answer;
 
                         clicked => {
                             show_answer = true;
@@ -171,7 +172,7 @@ export component LearnScreen {
                         spacing: Constants.spacing_medium;
                         for rating in 4: RatingButton {
                             duration: card.durations[rating];
-                            label: rating == 0 ? "Again" : rating == 1 ? "Hard" : rating == 2 ? "Good" : "Easy";
+                            label: rating == 0 ? tr.again : rating == 1 ? tr.hard : rating == 2 ? tr.good : tr.easy;
                             color: rating == 0 ? #FF0000 : rating == 2 ? #008000 : rating == 3 ? #0000FF : #000000;
 
                             clicked => {

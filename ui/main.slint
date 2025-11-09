@@ -1,4 +1,4 @@
-import { Constants } from "constants.slint";
+import { Constants, Translations } from "constants.slint";
 import { DeckNode, DeckTree, CardNode } from "types.slint";
 import { LearnScreen } from "screens/learn.slint";
 import { DeckSelectScreen } from "screens/deck_select.slint";
@@ -6,6 +6,8 @@ import { DeckSelectScreen } from "screens/deck_select.slint";
 export component MainWindow inherits Window {
     preferred-width: 500px;
     preferred-height: 400px;
+    in property <Translations> tr;
+
     in-out property <bool> learning;
     in-out property <CardNode> current_card;
 
@@ -24,6 +26,7 @@ export component MainWindow inherits Window {
     VerticalLayout {
         padding: Constants.padding_standard;
         if !learning: DeckSelectScreen {
+            tr: tr;
             due_total: deck_tree.due_total;
             deck_nodes: deck_tree.deck_nodes;
             deck_clicked(deck) => {
@@ -32,6 +35,7 @@ export component MainWindow inherits Window {
             }
         }
         if learning: LearnScreen {
+            tr: tr;
             card: current_card;
             home_clicked => {
                 update_deck_tree();

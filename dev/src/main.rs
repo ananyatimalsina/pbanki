@@ -1,7 +1,15 @@
 use common::*;
 
 fn main() {
-    let session = init_session("./pbanki/collection");
+    let config = Config::load_or_create("./pbanki/config.toml").unwrap_or_else(|e| {
+        eprintln!("Config error: {:?}, using defaults", e);
+        let mut cfg = Config::default();
+        cfg.general.collection_path = "./pbanki/collection".into();
+        cfg
+    });
+
+    let session = init_session(&config);
+    let translations = init_translations(&session);
 
     let ui = MainWindow::new().unwrap();
 
@@ -34,8 +42,9 @@ fn main() {
         }
     });
 
+    ui.set_tr(translations);
+
     ui.set_deck_tree(update_deck_tree(&session));
 
     let _ = ui.run();
 }
-

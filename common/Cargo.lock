@@ -1301,9 +1301,11 @@ version = "0.1.0"
 dependencies = [
  "anki",
  "anki_proto",
+ "serde",
  "slint",
  "slint-build",
  "tokio",
+ "toml 0.9.8",
 ]
 
 [[package]]

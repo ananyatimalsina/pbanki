@@ -22,7 +22,14 @@ fn main() {
 
             slint::platform::set_platform(Box::new(display)).unwrap();
 
-            let session = init_session("/mnt/ext1/applications/pbanki/collection");
+            let config = Config::load_or_create("/mnt/ext1/applications/pbanki/config.toml")
+                .unwrap_or_else(|e| {
+                    eprintln!("Config error: {:?}, using defaults", e);
+                    Config::default()
+                });
+
+            let session = init_session(&config);
+            let translations = init_translations(&session);
 
             let ui = Rc::new(MainWindow::new().unwrap());
 
@@ -54,6 +61,8 @@ fn main() {
                     ui.set_current_card(next);
                 }
             });
+
+            ui.set_tr(translations);
 
             ui.set_deck_tree(update_deck_tree(&session));
 
