@@ -47,7 +47,7 @@ pbAnki uses a TOML configuration file. On first launch, a default config will be
 # Language code for Anki i18n (e.g., "en", "de", "fr", "ja", "es", "pt", "ru", "zh", "ko")
 language = "en"
 
-# Collection path (relative to app directory or absolute)
+# Collection path (absolute)
 collection_path = "/mnt/ext1/applications/pbanki/collection"
 
 [ankiweb]
