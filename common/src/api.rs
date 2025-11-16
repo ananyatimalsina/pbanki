@@ -1,4 +1,6 @@
 use std::cell::RefCell;
+use std::fs;
+use std::path::Path;
 use std::rc::Rc;
 use std::time::Instant;
 
@@ -7,7 +9,7 @@ use anki::scheduler::states::SchedulingStates;
 use anki::timestamp::{TimestampMillis, TimestampSecs};
 use anki::{collection::CollectionBuilder, prelude::I18n};
 
-use crate::{CardNode, DeckNode, DeckTree, Translations};
+use crate::{CardNode, DeckNode, DeckTree, SyncManager, SyncResult, SyncStatus, Translations};
 
 use slint::ModelRc;
 
@@ -16,17 +18,26 @@ pub struct LearnSession {
     pub current_card: RefCell<Option<i64>>,
     pub states: RefCell<Option<SchedulingStates>>,
     pub start_time: RefCell<Option<Instant>>,
+    pub sync_manager: Rc<SyncManager>,
 }
 
 pub fn init_session(config: &crate::config::Config) -> Rc<LearnSession> {
     let collection_path = &config.general.collection_path;
     let language = &config.general.language;
 
-    let mut col = match CollectionBuilder::new(format!("{}/collection.anki2", collection_path))
-        .set_media_paths(
-            format!("{}/collection.media/", collection_path),
-            format!("{}/collection.media.db2", collection_path),
-        )
+    let col_file = format!("{}/collection.anki2", collection_path);
+
+    if let Some(parent) = Path::new(&col_file).parent() {
+        if let Err(e) = fs::create_dir_all(parent) {
+            eprintln!("Failed to create collection directory: {:?}", e);
+            panic!(
+                "Cannot create collection directory at: {}",
+                parent.display()
+            );
+        }
+    }
+
+    let mut col = match CollectionBuilder::new(&col_file)
         .set_tr(I18n::new(&[language.as_str()]))
         .build()
     {
@@ -51,6 +62,7 @@ pub fn init_session(config: &crate::config::Config) -> Rc<LearnSession> {
         current_card: RefCell::new(None),
         states: RefCell::new(None),
         start_time: RefCell::new(None),
+        sync_manager: Rc::new(SyncManager::new()),
     })
 }
 
@@ -69,16 +81,6 @@ pub fn init_translations(session: &LearnSession) -> Translations {
             full.as_ref().replace("0", "").into()
         },
         no_cards_due: i181.studying_no_cards_are_due_yet().as_ref().into(),
-        show: i181.importing_show().as_ref().into(),
-        of: {
-            let full = i181.statistics_amount_of_total_with_percentage(0, 0, 0);
-            let parts: Vec<&str> = full.as_ref().split_whitespace().collect();
-            if parts.len() >= 3 {
-                format!(" {} ", parts[1]).into()
-            } else {
-                " of ".into()
-            }
-        },
     }
 }
 
@@ -248,4 +250,52 @@ pub fn rate_card(
     let _ = session.collection.borrow_mut().answer_card(&mut answer);
 
     next_card(session, deck, chars_per_page)
+}
+
+pub fn sync_ankiweb(session: &LearnSession, config: &crate::config::Config) -> SyncResult {
+    let rt = tokio::runtime::Runtime::new().unwrap();
+
+    let ankiweb_config = &config.ankiweb;
+
+    let hkey = if let Some(token) = &ankiweb_config.token {
+        token.clone()
+    } else {
+        match rt.block_on(
+            session
+                .sync_manager
+                .login(&ankiweb_config.username, &ankiweb_config.password),
+        ) {
+            Ok(token) => {
+                let mut cfg = config.clone();
+                cfg.ankiweb.token = Some(token.clone());
+                let _ = cfg.save();
+                token
+            }
+            Err(e) => {
+                return SyncResult {
+                    success: false,
+                    message: format!("Login failed: {}", e),
+                    server_message: None,
+                };
+            }
+        }
+    };
+
+    let result = rt.block_on(async {
+        let mut col = session.collection.borrow_mut();
+        session.sync_manager.sync_collection(&mut col, &hkey).await
+    });
+
+    match result {
+        Ok(sync_result) => sync_result,
+        Err(e) => SyncResult {
+            success: false,
+            message: format!("Sync failed: {}", e),
+            server_message: None,
+        },
+    }
+}
+
+pub fn get_sync_status(session: &LearnSession) -> SyncStatus {
+    session.sync_manager.get_status()
 }

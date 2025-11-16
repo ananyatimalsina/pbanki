@@ -7,7 +7,8 @@ edition = "2024"
 anki = { git = "https://github.com/ankitects/anki", branch = "main" }
 anki_proto = { git = "https://github.com/ankitects/anki", branch = "main" }
 slint = { git = "https://github.com/slint-ui/slint", rev = "44208ff", default-features = false, features = ["compat-1-2", "std", "software-renderer-systemfonts", "renderer-software"]}
-tokio = { version = "1", features = ["io-util"] }
+tokio = { version = "1", features = ["io-util", "rt", "macros"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "gzip"] }
 serde = { version = "1.0", features = ["derive"] }
 toml = "0.9"
 

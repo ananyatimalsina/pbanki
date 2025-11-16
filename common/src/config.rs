@@ -21,7 +21,7 @@ pub struct AnkiWebConfig {
     #[serde(default)]
     pub password: String,
     #[serde(default)]
-    pub token: String,
+    pub token: Option<String>,
     #[serde(default)]
     pub auto_sync: bool,
     #[serde(default)]
@@ -38,7 +38,7 @@ impl Default for Config {
             ankiweb: AnkiWebConfig {
                 username: String::new(),
                 password: String::new(),
-                token: String::new(),
+                token: None,
                 auto_sync: false,
                 sync_on_exit: false,
             },
@@ -93,7 +93,8 @@ impl Config {
         }
     }
 
-    pub fn save(&self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
+        let path = "/mnt/ext1/applications/pbanki/config.toml";
         let toml_string = toml::to_string_pretty(self)?;
 
         if let Some(parent) = Path::new(path).parent() {
@@ -113,7 +114,7 @@ impl Config {
         Ok(())
     }
 
-    pub fn update_and_save(&mut self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
-        self.save(path)
+    pub fn update_and_save(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        self.save()
     }
 }

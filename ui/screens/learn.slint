@@ -140,7 +140,7 @@ export component LearnScreen {
 
                     VerticalLayout {
                         Text {
-                            text: (current-page < pages.length ? pages[current-page] : "") + (pages.length > 1 ? "\n\n(" + tr.show + " " + (current-page + 1) + tr.of + total-pages + ")" : "");
+                            text: (current-page < pages.length ? pages[current-page] : "") + (pages.length > 1 ? "\n\n[" + (current-page + 1) + "/" + total-pages + "]" : "");
                             font-family: Constants.font_family_standard;
                             font-size: Constants.font_size_content;
                             wrap: TextWrap.word-wrap;
